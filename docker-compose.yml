@@ -1,0 +1,112 @@
+version: '3.8'
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgresql:
+  redis:
+    driver: local
+
+services:
+
+### PHP-FPM ##############################################
+    app:
+      build:
+        context: .
+        dockerfile: .docker/php-fpm/alpine/Dockerfile
+      volumes:
+        - .:/var/www
+      environment:
+        APP_ENV: local
+        CONTAINER_ROLE: app
+      networks:
+        - backend
+      depends_on:
+        - postgres
+
+#    cron:
+#      build:
+#        context: .
+#        dockerfile: .docker/php-fpm/alpine/Dockerfile
+#      volumes:
+#        - .:/var/www
+#      environment:
+#        APP_ENV: local
+#        CONTAINER_ROLE: cron
+#      networks:
+#        - backend
+#
+#    queue:
+#      build:
+#        context: .
+#        dockerfile: .docker/php-fpm/alpine/Dockerfile
+#      volumes:
+#        - .:/var/www
+#      environment:
+#        APP_ENV: local
+#        CONTAINER_ROLE: queue
+#      networks:
+#        - backend
+#      depends_on:
+#        - postgres
+
+
+### NGINX Server #########################################
+    nginx:
+      build:
+        context: .
+        dockerfile: .docker/nginx/Dockerfile
+      volumes:
+        - .:/var/www
+        - ./storage/app/public:/var/www/public/storage
+      ports:
+        - 80:80
+        - 443:443
+      depends_on:
+      - app
+      networks:
+        - backend
+
+### PostgreSql ################################################
+    postgres:
+      image: postgres:14
+      environment:
+        POSTGRES_DB: laravel
+        POSTGRES_USER: laravel
+        POSTGRES_PASSWORD: laravel
+      ports:
+        - 5432:5432
+      volumes:
+        - .docker/postgres/data/:/var/lib/postgresql/data
+      networks:
+        - backend
+
+### Redis ###############################################
+    redis:
+      build:
+        context: .
+        dockerfile: .docker/redis/Dockerfile
+      ports:
+        - 6379:6379
+      volumes:
+        - redis:/data
+      networks:
+        - backend
+
+### Adminer ###############################################
+    adminer:
+      image: adminer
+      ports:
+        - 8080:8080
+      networks:
+        - backend
+
+    mailhog:
+      image: mailhog/mailhog
+      ports:
+        - 1025:1025
+        - 8025:8025
+      networks:
+        - backend

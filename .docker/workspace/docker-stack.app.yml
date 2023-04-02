@@ -1,0 +1,25 @@
+version: "3.8"
+
+networks:
+  network:
+
+services:
+  app:
+    image: $IMAGE_WORKSPACE
+    volumes:
+      - $STORAGE_DIR/docker/storage/app:/var/www/storage/app:z
+    environment:
+      - CONTAINER_ROLE=app
+      - DB_HOST=postgres
+      - DB_DATABASE
+      - DB_USERNAME
+      - DB_PASSWORD
+      # Mail
+      - MAIL_USERNAME=$SMTP_LOGIN
+      - MAIL_PASSWORD=$SMTP_PASSWORD
+      # Passport
+      - PASSPORT_PRIVATE_KEY
+      - PASSPORT_PUBLIC_KEY
+    networks:
+      - network
+

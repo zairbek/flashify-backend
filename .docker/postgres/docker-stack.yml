@@ -1,0 +1,16 @@
+version: "3.8"
+
+networks:
+  network:
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_DB: $DB_DATABASE
+      POSTGRES_USER: $DB_USERNAME
+      POSTGRES_PASSWORD: $DB_PASSWORD
+    volumes:
+      - $STORAGE_DIR/docker/postgresql:/var/lib/postgresql # Именованный тома перекидываем внутр контейнер
+    networks:
+      - network

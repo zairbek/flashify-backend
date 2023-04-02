@@ -1,0 +1,5 @@
+/.git
+/.gitlab-ci
+/.gitlab-ci.yml
+/node_modules
+/storage/app

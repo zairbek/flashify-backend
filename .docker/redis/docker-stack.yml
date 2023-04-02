@@ -1,0 +1,18 @@
+version: "3.8"
+
+networks:
+  network:
+
+volumes:
+  redis:
+
+services:
+  redis:
+    image: $IMAGE_REDIS
+    expose:
+      - 6379
+    volumes:
+      - redis:/data
+    networks:
+      - network
+
