@@ -27,7 +27,7 @@ class SendCodeForSignInViaPhoneTest extends TestCase
             uuid: Uuid::next(),
             phone: $this->phone,
             createdAt: CreatedAt::now(),
-            sendAt: new SendAt((new \DateTime())->sub(new \DateInterval('PT59S')))
+            sendAt: new SendAt((new \DateTime())->sub(new \DateInterval('PT60S')))
         ));
     }
 
