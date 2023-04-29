@@ -1,0 +1,16 @@
+post:
+  tags:
+    - Auth
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            phone:
+              type: string
+              example: '+996772119663'
+  responses:
+    '200':
+      $ref: '../../index.yaml#/components/responses/ok'

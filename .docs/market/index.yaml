@@ -1,0 +1,41 @@
+openapi: 3.0.0
+
+info:
+  title: MarketPlace Project
+  version: 1.0.0
+
+servers:
+  - url: http://market.loc
+    description: local dev api
+
+tags:
+  - name: HealthChecks
+    description: Проверка состояния системы
+  - name: Auth
+
+paths:
+  /api/market/v1/healthCheck:
+    get:
+      tags:
+        - HealthChecks
+      summary: Проверка состояния системы
+      responses:
+        '200':
+          $ref: '#/components/responses/ok'
+
+  /api/market/v1/auth/phone/request:
+    $ref: './paths/auth/request.yaml'
+
+
+
+components:
+  responses:
+    ok:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+                example: Ok

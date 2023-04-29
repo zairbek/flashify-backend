@@ -54,7 +54,8 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
-        ]
+        ],
+        "swagger": "swagger-cli bundle ./.docs/market/index.yaml --outfile storage/documentation/market.yaml --type yaml"
     },
     "extra": {
         "laravel": {

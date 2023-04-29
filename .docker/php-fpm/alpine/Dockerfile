@@ -47,6 +47,7 @@ RUN if [ ${INSTALL_NODE} = true ]; then \
         --repository https://dl-cdn.alpinelinux.org/alpine/v3.17/main \
         nodejs=18.14.2-r0  \
         npm=9.1.2-r0 \
+    && npm install -g @apidevtools/swagger-cli \
 ;fi
 
 ###########################################################################
