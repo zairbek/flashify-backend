@@ -33,22 +33,28 @@ class UserPhoneRepository implements UserPhoneRepositoryInterface
      */
     public function findUserPhone(Phone $phone): UserPhoneNumber
     {
-        $userPhoneDb = UserPhone::query()
+        /** @var UserPhone $userPhone */
+        $userPhone = UserPhone::query()
             ->where('region_iso_code', $phone->getRegionCode())
             ->where('phone_number', $phone->toString())
             ->first();
 
-        if (is_null($userPhoneDb)) {
+        if (is_null($userPhone)) {
             throw new UserPhoneNumberNotFoundException();
         }
 
-        return $this->hydrator->hydrate(UserPhoneNumber::class, [
-            'uuid' => new Uuid($userPhoneDb->uuid),
-            'phone' => Phone::fromString(regionCode: $userPhoneDb->region_iso_code, phoneString: $userPhoneDb->phone_number),
-            'createdAt' => new CreatedAt($userPhoneDb->created_at->toDateTime()),
-            'userId' => $userPhoneDb->user_id ? new UserId($userPhoneDb->user_id) : null,
-            'confirmationCode' => $userPhoneDb->confirmation_code ? new ConfirmationCode($userPhoneDb->confirmation_code) : null,
-            'sendAt' => $userPhoneDb->send_at ? new SendAt($userPhoneDb->send_at->toDateTime()) : null
+        return $this->hydrator($userPhone);
+    }
+
+    public function create(UserPhoneNumber $userPhoneNumber): void
+    {
+        UserPhone::create([
+            'uuid' => $userPhoneNumber->getUuid()->getId(),
+            'region_iso_code' => $userPhoneNumber->getPhone()->getRegionCode(),
+            'phone_number' => $userPhoneNumber->getPhone()->toString(),
+            'user_id' => $userPhoneNumber->getUserId()?->getUserId()->getId(),
+            'confirmation_code' => $userPhoneNumber->getConfirmationCode()?->getCode(),
+            'send_at' => $userPhoneNumber->getSendAt()?->toIsoFormat(),
         ]);
     }
 
@@ -62,11 +68,41 @@ class UserPhoneRepository implements UserPhoneRepositoryInterface
             ->where('region_iso_code', $userPhoneNumber->getPhone()->getRegionCode())
             ->where('phone_number', $userPhoneNumber->getPhone()->toString())
             ->update([
-            'region_iso_code' => $userPhoneNumber->getPhone()->getRegionCode(),
-            'phone_number' => $userPhoneNumber->getPhone()->toString(),
-            'user_id' => $userPhoneNumber->getUserId()?->getUserId()->getId(),
-            'confirmation_code' => $userPhoneNumber->getConfirmationCode()?->getCode(),
-            'send_at' => $userPhoneNumber->getSendAt()?->toIsoFormat(),
+                'region_iso_code' => $userPhoneNumber->getPhone()->getRegionCode(),
+                'phone_number' => $userPhoneNumber->getPhone()->toString(),
+                'user_id' => $userPhoneNumber->getUserId()?->getUserId()->getId(),
+                'confirmation_code' => $userPhoneNumber->getConfirmationCode()?->getCode(),
+                'send_at' => $userPhoneNumber->getSendAt()?->toIsoFormat(),
+            ]);
+    }
+
+    /**
+     * @param Uuid $uuid
+     * @return UserPhoneNumber
+     * @throws UserPhoneNumberNotFoundException
+     */
+    public function find(Uuid $uuid): UserPhoneNumber
+    {
+        /** @var UserPhone $userPhone */
+        $userPhone = UserPhone::query()->where('uuid', $uuid->getId())->first();
+
+        if (is_null($userPhone)) {
+            throw new UserPhoneNumberNotFoundException();
+        }
+
+        return $this->hydrator($userPhone);
+    }
+
+    public function hydrator(UserPhone $userPhoneDb): UserPhoneNumber
+    {
+        return $this->hydrator->hydrate(UserPhoneNumber::class, [
+            'uuid' => new Uuid($userPhoneDb->uuid),
+            'phone' => Phone::fromString(regionCode: $userPhoneDb->region_iso_code, phoneString: $userPhoneDb->phone_number),
+            'createdAt' => new CreatedAt($userPhoneDb->created_at->toDateTime()),
+            'userId' => $userPhoneDb->user_id ? new UserId(new Uuid($userPhoneDb->user_id)) : null,
+            'confirmationCode' => $userPhoneDb->confirmation_code ? new ConfirmationCode($userPhoneDb->confirmation_code) : null,
+            'sendAt' => $userPhoneDb->send_at ? new SendAt($userPhoneDb->send_at->toDateTime()) : null
         ]);
     }
+
 }

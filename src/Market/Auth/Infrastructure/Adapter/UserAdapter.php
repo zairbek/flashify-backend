@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace MarketPlace\Market\Auth\Infrastructure\Adapter;
 
+use LogicException;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
 use MarketPlace\Common\Domain\ValueObject\Phone;
@@ -58,9 +59,19 @@ class UserAdapter implements UserAdapterInterface
         ]);
     }
 
-    public function createUserPhone(PhoneNumber $phoneNumber): void
+    public function createUserPhone(PhoneNumber $userPhone): void
     {
-        // TODO: Implement createUserPhone() method.
+        $this->api->createUserPhone([
+            'uuid' => $userPhone->getUuid()->getId(),
+            'phone' => [
+                'regionIsoCode' => $userPhone->getPhone()->getRegionCode(),
+                'number' => $userPhone->getPhone()->toString()
+            ],
+            'createdAt' => $userPhone->getCreatedAt()->toIsoFormat(),
+            'userId' => $userPhone->getUserId()?->getUserId(),
+            'confirmationCode' => $userPhone->getConfirmationCode()?->getCode(),
+            'sendAt' => $userPhone->getSendAt()?->toIsoFormat(),
+        ]);
     }
 
     public function updateUserPhone(PhoneNumber $userPhone): void
@@ -88,6 +99,19 @@ class UserAdapter implements UserAdapterInterface
 
     public function authorize(User $user): Token
     {
-        // TODO: Implement authorize() method.
+        return new Token('d', 'e', 'd', 'd');
+    }
+
+    public function createUserViaPhone(User $user): void
+    {
+        if (is_null($user->getPhone())){
+            throw new LogicException('При создание пользователя через номер телефона произошла ошибка.');
+        }
+
+        $this->api->createUserViaPhone([
+            'uuid' => $user->getId()->getId(),
+            'login' => $user->getLogin()->getLogin(),
+            'phoneUuid' => $user->getPhone()->getUuid()->getId(),
+        ]);
     }
 }

@@ -10,6 +10,6 @@ class UserAuthorizedListener
 {
     public function __invoke(UserAuthorizedEvent $event): void
     {
-        \Log::info('user logged: ' . $event->user);
+        \Log::info('user logged: ' . $event->user->getId()->getId());
     }
 }

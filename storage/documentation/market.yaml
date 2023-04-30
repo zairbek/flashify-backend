@@ -30,12 +30,78 @@ paths:
               type: object
               properties:
                 phone:
+                  required: true
                   type: string
                   example: '+996772119663'
       responses:
         '200':
           $ref: '#/components/responses/ok'
+        '400':
+          $ref: '#/components/responses/error'
+        '422':
+          description: null
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  errors:
+                    type: object
+                    properties:
+                      phone:
+                        type: array
+                        items:
+                          type: string
+  /api/market/v1/auth/phone/sign-in:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                phone:
+                  required: true
+                  type: string
+                  example: '+996772119663'
+                code:
+                  required: true
+                  type: string
+                  example: '119663'
+      responses:
+        '200':
+          $ref: '#/components/responses/ok'
+        '400':
+          $ref: '#/components/responses/error'
+        '422':
+          description: null
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                  errors:
+                    type: object
+                    properties:
+                      phone:
+                        type: array
+                        items:
+                          type: string
+                      code:
+                        type: array
+                        items:
+                          type: string
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   responses:
     ok:
       description: Ok
@@ -46,3 +112,12 @@ components:
               message:
                 type: string
                 example: Ok
+    error:
+      description: error
+      content:
+        application/json:
+          schema:
+            properties:
+              errors:
+                type: string
+                example: error message

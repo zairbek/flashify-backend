@@ -12,10 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('user_phones', function (Blueprint $table) {
-            $table->uuid();
+            $table->uuid()->unique();
             $table->string(column: 'region_iso_code', length: 2);
             $table->string(column: 'phone_number', length: 30);
-            $table->foreignUuid('user_id')->nullable()->constrained()->on('users')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained()->on('users')->references('uuid')->cascadeOnDelete();
             $table->string(column: 'confirmation_code', length: 10)->nullable();
             $table->dateTime(column: 'send_at')->nullable();
             $table->timestamps();

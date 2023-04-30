@@ -60,6 +60,7 @@ class AuthorizeService
             $userPhone = $this->userAdapter->findUserPhone($phone);
             $userPhone->sendConfirmationCode();
 
+
             $this->userAdapter->updateUserPhone($userPhone);
         } catch (UserPhoneNotFoundException $e) {
             $code = ConfirmationCode::generate();
@@ -68,7 +69,6 @@ class AuthorizeService
                 phone: $phone,
                 createdAt: CreatedAt::now(),
                 confirmationCode: $code,
-                sendAt: SendAt::now()
             );
             $userPhone->sendConfirmationCode($code);
 
@@ -88,7 +88,6 @@ class AuthorizeService
     public function signInWithPhone(SignInWithPhoneDto $dto): Token
     {
         $phone = Phone::fromString($dto->regionIsoCode, $dto->phone);
-
         $userPhone = $this->userAdapter->findUserPhone($phone);
         if ($userPhone->isCodeNotMatch(new ConfirmationCode($dto->confirmationCode))) {
             throw new ConfirmationCodeIsNotMatchException();
@@ -107,6 +106,7 @@ class AuthorizeService
             }
         } else {
             $user = User::createViaPhone($userPhone);
+            $this->userAdapter->createUserViaPhone($user);
         }
 
         $user->authorize();

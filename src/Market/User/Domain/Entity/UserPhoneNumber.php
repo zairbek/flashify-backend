@@ -4,15 +4,20 @@ declare(strict_types=1);
 
 namespace MarketPlace\Market\User\Domain\Entity;
 
+use MarketPlace\Common\Domain\Entity\AggregateRoot;
+use MarketPlace\Common\Domain\Entity\EventTrait;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
+use MarketPlace\Common\Domain\ValueObject\Login;
 use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Market\User\Domain\ValueObject\UserId;
 
-class UserPhoneNumber
+class UserPhoneNumber implements AggregateRoot
 {
+    use EventTrait;
+
     private Uuid $uuid;
     private Phone $phone;
     private CreatedAt $createdAt;
@@ -83,5 +88,10 @@ class UserPhoneNumber
     public function getSendAt(): ?SendAt
     {
         return $this->sendAt;
+    }
+
+    public function setUserId(UserId $userId): void
+    {
+        $this->userId = $userId;
     }
 }

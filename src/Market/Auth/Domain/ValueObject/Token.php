@@ -55,4 +55,14 @@ class Token
     {
         return $this->accessTokenLifeTime;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->tokenType,
+            'lifeTime' => $this->accessTokenLifeTime,
+            'accessToken' => $this->accessToken,
+            'refreshToken' => $this->refreshToken,
+        ];
+    }
 }

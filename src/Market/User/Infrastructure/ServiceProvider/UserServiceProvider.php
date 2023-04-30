@@ -7,17 +7,28 @@ namespace MarketPlace\Market\User\Infrastructure\ServiceProvider;
 use App;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use MarketPlace\Market\User\Application\Service\UserPhoneService;
+use MarketPlace\Market\User\Application\Service\UserService;
 use MarketPlace\Market\User\Domain\Repository\UserPhoneRepositoryInterface;
-use MarketPlace\Market\User\Domain\Service\UserPhoneService;
+use MarketPlace\Market\User\Domain\Repository\UserRepositoryInterface;
 use MarketPlace\Market\User\Infrastructure\Repository\UserPhoneRepository;
+use MarketPlace\Market\User\Infrastructure\Repository\UserRepository;
 
 class UserServiceProvider extends ServiceProvider
 {
+    public array $bindings = [
+        UserPhoneRepositoryInterface::class => UserPhoneRepository::class,
+        UserRepositoryInterface::class => UserRepository::class,
+    ];
+
     public function register(): void
     {
-        $this->app->bind(UserPhoneRepositoryInterface::class, UserPhoneRepository::class);
         $this->app->singleton(UserPhoneService::class, function (Application $app) {
-            return new UserPhoneService(App::make(UserPhoneRepositoryInterface::class));
+            return new UserPhoneService(App::make(UserRepositoryInterface::class), App::make(UserPhoneRepositoryInterface::class));
+        });
+
+        $this->app->singleton(UserService::class, function () {
+            return new UserService(App::make(UserRepositoryInterface::class));
         });
     }
 }

@@ -22,19 +22,19 @@ class User implements AggregateRoot
     private Uuid $id;
     private Login $login;
     private ?PersonName $personName;
-    private ?Phone $phone;
+    private ?PhoneNumber $phone;
     private ?Email $email;
     private ?Password $password;
     private UserStatus $status;
 
     public function __construct(
-        Uuid        $id,
-        Login       $login,
-        ?PersonName $personName = null,
-        ?Phone      $phone = null,
-        ?Email      $email = null,
-        ?Password   $password = null,
-        ?UserStatus $status = null,
+        Uuid         $id,
+        Login        $login,
+        ?PersonName  $personName = null,
+        ?PhoneNumber $phone = null,
+        ?Email       $email = null,
+        ?Password    $password = null,
+        ?UserStatus  $status = null,
     )
     {
         $this->id = $id;
@@ -51,7 +51,7 @@ class User implements AggregateRoot
         return new self(
             id: Uuid::next(),
             login: Login::generate(),
-            phone: $phoneNumber->getPhone(),
+            phone: $phoneNumber,
         );
     }
 
@@ -74,6 +74,46 @@ class User implements AggregateRoot
     public function authorize(): void
     {
         $this->recordEvent(new UserAuthorizedEvent($this));
+    }
+
+    /**
+     * @return Login
+     */
+    public function getLogin(): Login
+    {
+        return $this->login;
+    }
+
+    /**
+     * @return PersonName|null
+     */
+    public function getPersonName(): ?PersonName
+    {
+        return $this->personName;
+    }
+
+    /**
+     * @return PhoneNumber|null
+     */
+    public function getPhone(): ?PhoneNumber
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @return Email|null
+     */
+    public function getEmail(): ?Email
+    {
+        return $this->email;
+    }
+
+    /**
+     * @return Password|null
+     */
+    public function getPassword(): ?Password
+    {
+        return $this->password;
     }
 }
 

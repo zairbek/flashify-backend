@@ -33,4 +33,6 @@ interface UserAdapterInterface
     public function findUser(UserId $getUserId): User;
 
     public function authorize(User $user): Token;
+
+    public function createUserViaPhone(User $user): void;
 }
