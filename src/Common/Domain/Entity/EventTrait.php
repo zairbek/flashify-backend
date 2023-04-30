@@ -16,6 +16,9 @@ trait EventTrait
         $this->events[] = $event;
     }
 
+    /**
+     * @return array<EventInterface>
+     */
     public function releaseEvents(): array
     {
         $events = $this->events;

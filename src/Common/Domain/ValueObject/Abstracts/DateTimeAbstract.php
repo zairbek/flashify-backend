@@ -31,4 +31,17 @@ abstract class DateTimeAbstract
     {
         return new static(new DateTime(timezone: new DateTimeZone('UTC')));
     }
+
+    public function toIsoFormat(): string
+    {
+        return $this->getDateTime()->format('c');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function fromIsoFormat(string $isoString): static
+    {
+        return new static(new DateTime($isoString));
+    }
 }

@@ -24,14 +24,6 @@ class PhoneNumber implements AggregateRoot
 
     private Uuid $uuid;
     private Phone $phone;
-
-    /**
-     * @return Phone
-     */
-    public function getPhone(): Phone
-    {
-        return $this->phone;
-    }
     private CreatedAt $createdAt;
     private ?UserId $userId;
     private ?ConfirmationCode $confirmationCode = null;
@@ -58,6 +50,46 @@ class PhoneNumber implements AggregateRoot
     }
 
     /**
+     * @return Phone
+     */
+    public function getPhone(): Phone
+    {
+        return $this->phone;
+    }
+
+    /**
+     * @return Uuid
+     */
+    public function getUuid(): Uuid
+    {
+        return $this->uuid;
+    }
+
+    /**
+     * @return CreatedAt
+     */
+    public function getCreatedAt(): CreatedAt
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return ConfirmationCode|null
+     */
+    public function getConfirmationCode(): ?ConfirmationCode
+    {
+        return $this->confirmationCode;
+    }
+
+    /**
+     * @return SendAt|null
+     */
+    public function getSendAt(): ?SendAt
+    {
+        return $this->sendAt;
+    }
+
+    /**
      * @return UserId|null
      */
     public function getUserId(): ?UserId
@@ -81,6 +113,7 @@ class PhoneNumber implements AggregateRoot
         ) {
             throw new SendSmsThrottleException();
         }
+        $this->sendAt = SendAt::now();
 
         $this->recordEvent(new SendConfirmationCodeForPhoneNumberEvent($this->phone, $this->confirmationCode));
     }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MarketPlace\Market\Auth\Domain\Service;
 
 use Exception;
+use MarketPlace\Common\Domain\Events\EventDispatcher;
 use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
@@ -17,19 +18,34 @@ use MarketPlace\Market\Auth\Application\Dto\SignInWithPhoneDto;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
+use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForPhoneNumberEvent;
+use MarketPlace\Market\Auth\Domain\Events\UserAuthorizedEvent;
 use MarketPlace\Market\Auth\Domain\Exception\ConfirmationCodeIsNotMatchException;
 use MarketPlace\Market\Auth\Domain\Exception\SendSmsThrottleException;
 use MarketPlace\Market\Auth\Domain\Exception\UserNotFoundException;
 use MarketPlace\Market\Auth\Domain\Exception\UserPhoneNotFoundException;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
+use MarketPlace\Market\Auth\Infrastructure\Listener\SendConfirmationCodeToPhoneNumberListener;
+use MarketPlace\Market\Auth\Infrastructure\Listener\UserAuthorizedListener;
 
 class AuthorizeService
 {
+    private array $listeners = [
+        SendConfirmationCodeForPhoneNumberEvent::class => [
+            SendConfirmationCodeToPhoneNumberListener::class
+        ],
+        UserAuthorizedEvent::class => [
+            UserAuthorizedListener::class
+        ]
+    ];
+
     private UserAdapterInterface $userAdapter;
+    private EventDispatcher $eventDispatcher;
 
     public function __construct(UserAdapterInterface $userAdapter)
     {
         $this->userAdapter = $userAdapter;
+        $this->eventDispatcher = new EventDispatcher($this->listeners);
     }
 
     /**
@@ -59,7 +75,7 @@ class AuthorizeService
             $this->userAdapter->createUserPhone($userPhone);
         }
 
-        $userPhone->releaseEvents();
+        $this->eventDispatcher->dispatch($userPhone->releaseEvents());
     }
 
     /**
@@ -94,7 +110,7 @@ class AuthorizeService
         }
 
         $user->authorize();
-        $user->releaseEvents();
+        $this->eventDispatcher->dispatch($user->releaseEvents());
 
         return $this->userAdapter->authorize($user);
     }

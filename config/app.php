@@ -195,6 +195,11 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        /*
+         * Domains
+         */
+        MarketPlace\Market\Auth\Infrastructure\ServiceProvider\AuthServiceProvider::class,
+        MarketPlace\Market\User\Infrastructure\ServiceProvider\UserServiceProvider::class,
     ],
 
     /*

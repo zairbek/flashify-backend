@@ -9,14 +9,10 @@ use MarketPlace\Market\Auth\Domain\Entity\User;
 
 class UserAuthorizedEvent implements EventInterface
 {
-    private User $user;
+    public User $user;
 
     public function __construct(User $user)
     {
         $this->user = $user;
-    }
-
-    public function execute(): void
-    {
     }
 }

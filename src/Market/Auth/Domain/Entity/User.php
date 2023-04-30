@@ -28,12 +28,12 @@ class User implements AggregateRoot
     private UserStatus $status;
 
     public function __construct(
-        Uuid $id,
-        Login $login,
+        Uuid        $id,
+        Login       $login,
         ?PersonName $personName = null,
-        ?Phone $phone = null,
-        ?Email $email = null,
-        ?Password $password = null,
+        ?Phone      $phone = null,
+        ?Email      $email = null,
+        ?Password   $password = null,
         ?UserStatus $status = null,
     )
     {
@@ -53,6 +53,14 @@ class User implements AggregateRoot
             login: Login::generate(),
             phone: $phoneNumber->getPhone(),
         );
+    }
+
+    /**
+     * @return Uuid
+     */
+    public function getId(): Uuid
+    {
+        return $this->id;
     }
 
     /**
