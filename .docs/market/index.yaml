@@ -24,11 +24,18 @@ paths:
           $ref: '#/components/responses/ok'
 
   /api/market/v1/auth/phone/request:
-    $ref: './paths/auth/request.yaml'
+    $ref: './paths/auth/phone/request.yaml'
+  /api/market/v1/auth/phone/sign-in:
+    $ref: './paths/auth/phone/signIn.yaml'
 
 
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   responses:
     ok:
       description: Ok
@@ -39,3 +46,12 @@ components:
               message:
                 type: string
                 example: Ok
+    error:
+      description: error
+      content:
+        application/json:
+          schema:
+            properties:
+              errors:
+                type: string
+                example: error message

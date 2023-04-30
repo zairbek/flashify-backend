@@ -1,0 +1,42 @@
+post:
+  tags:
+    - Auth
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            phone:
+              required: true
+              type: string
+              example: '+996772119663'
+            code:
+              required: true
+              type: string
+              example: '119663'
+  responses:
+    '200':
+      $ref: '../../../index.yaml#/components/responses/ok'
+    '422':
+      description:
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+              errors:
+                type: object
+                properties:
+                  phone:
+                    type: array
+                    items:
+                      type: string
+                  code:
+                    type: array
+                    items:
+                      type: string
+    '400':
+      $ref: '../../../index.yaml#/components/responses/error'
