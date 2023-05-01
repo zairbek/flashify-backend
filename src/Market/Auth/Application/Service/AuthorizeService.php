@@ -28,6 +28,7 @@ use MarketPlace\Market\Auth\Infrastructure\Exception\SendSmsThrottleException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserEmailNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
+use MarketPlace\Market\Auth\Infrastructure\Listener\SendConfirmationCodeForEmailListener;
 use MarketPlace\Market\Auth\Infrastructure\Listener\SendConfirmationCodeToPhoneNumberListener;
 use MarketPlace\Market\Auth\Infrastructure\Listener\UserAuthorizedListener;
 
@@ -41,7 +42,7 @@ class AuthorizeService
             UserAuthorizedListener::class
         ],
         SendConfirmationCodeForEmailEvent::class => [
-
+            SendConfirmationCodeForEmailListener::class
         ]
     ];
 
