@@ -12,7 +12,6 @@ use Laravel\Passport\HasApiTokens;
 /**
  * @property string $uuid
  * @property string $login
- * @property string|null $email
  * @property string|null $password
  * @property string|null $first_name
  * @property string|null $last_name
@@ -20,6 +19,7 @@ use Laravel\Passport\HasApiTokens;
  * @property string|null $sex
  * @property string $active
  * @property UserPhone|null $phone
+ * @property UserEmail|null $email
  * @property
  */
 class User extends Authenticatable
@@ -40,7 +40,6 @@ class User extends Authenticatable
     protected $fillable = [
         'uuid',
         'login',
-        'email',
         'password',
         'first_name',
         'last_name',
@@ -56,7 +55,6 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
-        'remember_token',
     ];
 
     /**
@@ -65,11 +63,15 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
-        'email_verified_at' => 'datetime',
     ];
 
     public function phone(): HasOne
     {
         return $this->hasOne(UserPhone::class, 'user_id', 'uuid');
+    }
+
+    public function email(): HasOne
+    {
+        return $this->hasOne(UserEmail::class);
     }
 }

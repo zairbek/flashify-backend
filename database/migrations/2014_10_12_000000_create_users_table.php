@@ -18,11 +18,8 @@ return new class extends Migration
             $table->string('middle_name', 255)->nullable();
             $table->enum('sex', ['male', 'female'])->nullable();
             $table->string('login', 50)->unique();
-            $table->string('email', 255)->unique()->nullable();
-            $table->timestamp('email_verified_at')->nullable();
             $table->enum('status', ['active', 'inactive', 'ban'])->default('active');
             $table->string('password')->nullable();
-            $table->rememberToken();
             $table->timestamps();
             $table->softDeletes();
         });
