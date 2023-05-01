@@ -9,13 +9,13 @@ class Token
     private string $accessToken;
     private string $tokenType;
     private string $refreshToken;
-    private string $accessTokenLifeTime;
+    private int $accessTokenLifeTime;
 
     public function __construct(
         string $accessToken,
         string $tokenType,
         string $refreshToken,
-        string $accessTokenLifeTime,
+        int $accessTokenLifeTime,
     )
     {
         $this->accessToken = $accessToken;
@@ -49,9 +49,9 @@ class Token
     }
 
     /**
-     * @return string
+     * @return int
      */
-    public function getAccessTokenLifeTime(): string
+    public function getAccessTokenLifeTime(): int
     {
         return $this->accessTokenLifeTime;
     }

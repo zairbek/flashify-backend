@@ -55,3 +55,19 @@ components:
               errors:
                 type: string
                 example: error message
+  parameters:
+    clientId:
+      name: client-id
+      in: header
+      description: Id приложение клиента
+      required: true
+      schema:
+        type: string
+    clientSecret:
+      name: client-secret
+      in: header
+      description: Ключ приложение клиента
+      required: true
+      schema:
+        type: string
+

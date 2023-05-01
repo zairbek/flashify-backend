@@ -4,13 +4,29 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\HasApiTokens;
 
+/**
+ * @property string $uuid
+ * @property string $login
+ * @property string|null $email
+ * @property string|null $password
+ * @property string|null $first_name
+ * @property string|null $last_name
+ * @property string|null $middle_name
+ * @property string|null $sex
+ * @property string $active
+ * @property UserPhone|null $phone
+ * @property
+ */
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory;
+    use Notifiable;
+    use HasApiTokens;
 
     protected $primaryKey = 'uuid';
     public $incrementing = false;
@@ -51,4 +67,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function phone(): HasOne
+    {
+        return $this->hasOne(UserPhone::class, 'user_id', 'uuid');
+    }
 }

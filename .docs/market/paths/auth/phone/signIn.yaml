@@ -1,6 +1,10 @@
 post:
   tags:
     - Auth
+  parameters:
+    - $ref: '../../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../../index.yaml#/components/parameters/clientSecret'
+
   requestBody:
     required: true
     content:

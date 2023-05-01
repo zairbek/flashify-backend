@@ -94,4 +94,19 @@ class UserPhoneNumber implements AggregateRoot
     {
         $this->userId = $userId;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->getUuid()->getId(),
+            'phone' => [
+                'regionIsoCode' => $this->getPhone()->getRegionCode(),
+                'number' => $this->getPhone()->toString()
+            ],
+            'createdAt' => $this->getCreatedAt()->toIsoFormat(),
+            'userId' => $this->getUserId()?->getUserId()->getId(),
+            'confirmationCode' => $this->getConfirmationCode()?->getCode(),
+            'sendAt' => $this->getSendAt()?->toIsoFormat(),
+        ];
+    }
 }

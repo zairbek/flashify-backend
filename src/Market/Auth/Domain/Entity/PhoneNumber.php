@@ -9,14 +9,14 @@ use DateTime;
 use Exception;
 use MarketPlace\Common\Domain\Entity\AggregateRoot;
 use MarketPlace\Common\Domain\Entity\EventTrait;
+use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
 use MarketPlace\Common\Domain\ValueObject\Phone;
-use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForPhoneNumberEvent;
-use MarketPlace\Market\Auth\Domain\Exception\SendSmsThrottleException;
 use MarketPlace\Market\Auth\Domain\ValueObject\UserId;
+use MarketPlace\Market\Auth\Infrastructure\Exception\SendSmsThrottleException;
 
 class PhoneNumber implements AggregateRoot
 {

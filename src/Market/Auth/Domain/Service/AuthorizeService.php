@@ -11,7 +11,6 @@ use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
 use MarketPlace\Common\Domain\ValueObject\Phone;
-use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaPhoneDto;
 use MarketPlace\Market\Auth\Application\Dto\SignInWithPhoneDto;
@@ -20,11 +19,11 @@ use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
 use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForPhoneNumberEvent;
 use MarketPlace\Market\Auth\Domain\Events\UserAuthorizedEvent;
-use MarketPlace\Market\Auth\Domain\Exception\ConfirmationCodeIsNotMatchException;
-use MarketPlace\Market\Auth\Domain\Exception\SendSmsThrottleException;
-use MarketPlace\Market\Auth\Domain\Exception\UserNotFoundException;
-use MarketPlace\Market\Auth\Domain\Exception\UserPhoneNotFoundException;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
+use MarketPlace\Market\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
+use MarketPlace\Market\Auth\Infrastructure\Exception\SendSmsThrottleException;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Listener\SendConfirmationCodeToPhoneNumberListener;
 use MarketPlace\Market\Auth\Infrastructure\Listener\UserAuthorizedListener;
 
@@ -59,7 +58,6 @@ class AuthorizeService
         try {
             $userPhone = $this->userAdapter->findUserPhone($phone);
             $userPhone->sendConfirmationCode();
-
 
             $this->userAdapter->updateUserPhone($userPhone);
         } catch (UserPhoneNotFoundException $e) {

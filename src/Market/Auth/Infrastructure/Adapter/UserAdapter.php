@@ -4,19 +4,26 @@ declare(strict_types=1);
 
 namespace MarketPlace\Market\Auth\Infrastructure\Adapter;
 
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use LogicException;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
+use MarketPlace\Common\Domain\ValueObject\Email;
+use MarketPlace\Common\Domain\ValueObject\Login;
+use MarketPlace\Common\Domain\ValueObject\PersonName;
 use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\SendAt;
+use MarketPlace\Common\Domain\ValueObject\UserStatus;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
-use MarketPlace\Market\Auth\Domain\Exception\UserPhoneNotFoundException;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Domain\ValueObject\UserId;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
+use MarketPlace\Market\Auth\Infrastructure\Service\TokenService;
 use MarketPlace\Market\User\Infrastructure\Api\UserApi;
 
 class UserAdapter implements UserAdapterInterface
@@ -83,7 +90,7 @@ class UserAdapter implements UserAdapterInterface
                 'number' => $userPhone->getPhone()->toString()
             ],
             'createdAt' => $userPhone->getCreatedAt()->toIsoFormat(),
-            'userId' => $userPhone->getUserId()?->getUserId(),
+            'userId' => $userPhone->getUserId()?->getUserId()->getId(),
             'confirmationCode' => $userPhone->getConfirmationCode()?->getCode(),
             'sendAt' => $userPhone->getSendAt()?->toIsoFormat(),
         ]);
@@ -94,12 +101,39 @@ class UserAdapter implements UserAdapterInterface
      */
     public function findUser(UserId $getUserId): User
     {
-        // TODO: Implement findUser() method.
+        $user = $this->api->findUser($getUserId->getUserId()->getId());
+
+        return $this->hydrator->hydrate(User::class, [
+            'id' => new Uuid($user['uuid']),
+            'login' => new Login($user['login']),
+            'personName' => new PersonName(
+                firstName: $user['userName']['firstName'],
+                lastName: $user['userName']['firstName'],
+                middleName: $user['userName']['middleName']
+            ),
+            'phone' => $user['phone']
+                ? $this->hydrator->hydrate(PhoneNumber::class, [
+                    'uuid' => new Uuid($user['phone']['uuid']),
+                    'phone' => Phone::fromString($user['phone']['phone']['regionIsoCode'], $user['phone']['phone']['number']),
+                    'createdAt' => CreatedAt::fromIsoFormat($user['phone']['createdAt']),
+                    'userId' => $user['phone']['userId'] ? new UserId(new Uuid($user['phone']['userId'])) : null,
+                    'confirmationCode' => $user['phone']['confirmationCode'] ? new ConfirmationCode($user['phone']['confirmationCode']) : null,
+                    'sendAt' => $user['phone']['sendAt'] ? SendAt::fromIsoFormat($user['phone']['sendAt']) : null,
+                ])
+                : null,
+            'email' => $user['email'] ? new Email($user['email']) : null,
+            'status' => new UserStatus($user['status']),
+        ]);
     }
 
+    /**
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     * @throws OAuthServerException
+     * @throws \JsonException
+     */
     public function authorize(User $user): Token
     {
-        return new Token('d', 'e', 'd', 'd');
+        return (new TokenService())->generate($user);
     }
 
     public function createUserViaPhone(User $user): void

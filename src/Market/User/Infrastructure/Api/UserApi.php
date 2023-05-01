@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace MarketPlace\Market\User\Infrastructure\Api;
 
 use App;
+use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Market\User\Application\Dto\CreateUserFromPhoneDto;
 use MarketPlace\Market\User\Application\Dto\CreateUserPhoneDto;
 use MarketPlace\Market\User\Application\Dto\FindUserPhoneDto;
 use MarketPlace\Market\User\Application\Dto\UpdateUserPhoneDto;
 use MarketPlace\Market\User\Application\Service\UserPhoneService;
 use MarketPlace\Market\User\Application\Service\UserService;
+use MarketPlace\Market\User\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Market\User\Infrastructure\Exception\UserPhoneNumberNotFoundException;
 
 class UserApi
@@ -66,5 +68,28 @@ class UserApi
             confirmationCode: $data['confirmationCode'],
             sendAt: $data['sendAt']
         ));
+    }
+
+    public function findUser(string $id): array
+    {
+        try {
+            $user = $this->userService->find(new Uuid($id));
+
+            return [
+                'uuid' => $user->getUuid()->getId(),
+                'login' => $user->getLogin()->getLogin(),
+                'email' => $user->getEmail()?->getEmail(),
+                'phone' => $user->getPhone() ? $user->getPhone()->toArray() : null,
+                'userName' => [
+                    'firstName' => $user->getUserName()?->getFirstName(),
+                    'lastName' => $user->getUserName()?->getLastName(),
+                    'middleName' => $user->getUserName()?->getMiddleName(),
+                ],
+                'sex' => $user->getSex()?->getSex(),
+                'status' => $user->getStatus()->getStatus()
+            ];
+        } catch (UserNotFoundException $e) {
+            return [];
+        }
     }
 }

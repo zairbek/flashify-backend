@@ -5,10 +5,10 @@ namespace MarketPlace\Market\Auth\Domain\Adapter;
 use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
-use MarketPlace\Market\Auth\Domain\Exception\UserNotFoundException;
-use MarketPlace\Market\Auth\Domain\Exception\UserPhoneNotFoundException;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Domain\ValueObject\UserId;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
 
 interface UserAdapterInterface
 {
