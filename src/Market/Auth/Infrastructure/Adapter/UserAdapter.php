@@ -16,10 +16,12 @@ use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\UserStatus;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Common\Domain\ValueObject\VerifiedAt;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
+use MarketPlace\Market\Auth\Domain\Entity\UserEmail;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Domain\ValueObject\UserId;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
@@ -121,7 +123,16 @@ class UserAdapter implements UserAdapterInterface
                     'sendAt' => $user['phone']['sendAt'] ? SendAt::fromIsoFormat($user['phone']['sendAt']) : null,
                 ])
                 : null,
-            'email' => $user['email'] ? new Email($user['email']) : null,
+            'email' => $user['email']
+                ? $this->hydrator->hydrate(UserEmail::class, [
+                    'uuid' => new Uuid($user['email']['uuid']),
+                    'email' => new Email($user['email']['email']),
+                    'confirmationCode' => $user['email']['confirmationCode'] ? new ConfirmationCode($user['email']['confirmationCode']) : null,
+                    'sendAt' => $user['email']['sendAt'] ? SendAt::fromIsoFormat($user['email']['sendAt']) : null,
+                    'verifiedAt' => $user['email']['verifiedAt'] ? VerifiedAt::fromIsoFormat($user['email']['verifiedAt']) : null,
+                    'userUuid' => new UserId(new Uuid($user['email']['userUuid'])),
+                ])
+                : null,
             'status' => new UserStatus($user['status']),
         ]);
     }

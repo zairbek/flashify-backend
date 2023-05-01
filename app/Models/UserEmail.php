@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
+ * @property string $uuid
  * @property string $email
  * @property string|null $confirmation_code
  * @property string|null $user_uuid
@@ -24,6 +25,7 @@ class UserEmail extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
+        'uuid',
         'email',
         'confirmation_code',
         'send_at',

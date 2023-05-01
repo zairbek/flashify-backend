@@ -23,7 +23,7 @@ class User implements AggregateRoot
     private Login $login;
     private ?PersonName $personName;
     private ?PhoneNumber $phone;
-    private ?Email $email;
+    private ?UserEmail $email;
     private ?Password $password;
     private UserStatus $status;
 
@@ -101,9 +101,9 @@ class User implements AggregateRoot
     }
 
     /**
-     * @return Email|null
+     * @return UserEmail|null
      */
-    public function getEmail(): ?Email
+    public function getEmail(): ?UserEmail
     {
         return $this->email;
     }

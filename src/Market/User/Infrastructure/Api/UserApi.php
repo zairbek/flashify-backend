@@ -78,7 +78,7 @@ class UserApi
             return [
                 'uuid' => $user->getUuid()->getId(),
                 'login' => $user->getLogin()->getLogin(),
-                'email' => $user->getEmail()?->getEmail(),
+                'email' => $user->getEmail()?->toArray(),
                 'phone' => $user->getPhone() ? $user->getPhone()->toArray() : null,
                 'userName' => [
                     'firstName' => $user->getUserName()?->getFirstName(),

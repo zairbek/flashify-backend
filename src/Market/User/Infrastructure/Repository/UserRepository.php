@@ -14,8 +14,10 @@ use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Sex;
 use MarketPlace\Common\Domain\ValueObject\UserStatus;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Common\Domain\ValueObject\VerifiedAt;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
 use MarketPlace\Market\User\Domain\Entity\User;
+use MarketPlace\Market\User\Domain\Entity\UserEmail;
 use MarketPlace\Market\User\Domain\Entity\UserPhoneNumber;
 use MarketPlace\Market\User\Domain\Repository\UserRepositoryInterface;
 use MarketPlace\Market\User\Domain\ValueObject\UserId;
@@ -45,7 +47,8 @@ class UserRepository implements UserRepositoryInterface
      */
     public function find(Uuid $uuid): User
     {
-        $userDb = UserDB::query()->with('phone')->where('uuid', $uuid->getId())->first();
+        /** @var UserDB $userDb */
+        $userDb = UserDB::query()->with(['phone', 'email'])->where('uuid', $uuid->getId())->first();
 
         if (is_null($userDb)) {
             throw new UserNotFoundException();
@@ -59,8 +62,8 @@ class UserRepository implements UserRepositoryInterface
                 lastName: $userDb->last_name,
                 middleName: $userDb->middle_name,
             ),
-            'phone' => $userDb->phone ?
-                $this->hydrator->hydrate(UserPhoneNumber::class, [
+            'phone' => $userDb->phone
+                ? $this->hydrator->hydrate(UserPhoneNumber::class, [
                      'uuid' => new Uuid($userDb->phone->uuid),
                      'phone' => Phone::fromString($userDb->phone->region_iso_code, $userDb->phone->phone_number),
                      'createdAt' => new CreatedAt($userDb->phone->created_at->toDateTime()),
@@ -69,8 +72,17 @@ class UserRepository implements UserRepositoryInterface
                      'sendAt' => $userDb->phone->send_at ? new SendAt($userDb->phone->send_at->toDateTime()) : null,
                 ])
                 : null,
+            'email' => $userDb->email
+                ? $this->hydrator->hydrate(UserEmail::class, [
+                    'uuid' => new Uuid($userDb->email->uuid),
+                    'email' => new Email($userDb->email->email),
+                    'confirmationCode' => $userDb->email->confirmation_code ? new ConfirmationCode($userDb->email->confirmation_code) : null,
+                    'sendAt' => $userDb->email->send_at ? new SendAt($userDb->email->send_at->toDateTime()) : null,
+                    'verifiedAt' => $userDb->email->email_verified_at ? new VerifiedAt($userDb->email->email_verified_at->toDateTime()) : null,
+                    'userUuid' => $userDb->email->user_uuid ? new UserId(new Uuid($userDb->email->user_uuid)) : null,
+                ])
+                : null,
             'sex' => $userDb->sex ? new Sex($userDb->sex) : null,
-            'email' => $userDb->email ? new Email($userDb->email) : null,
             'status' => new UserStatus($userDb->status),
         ]);
     }

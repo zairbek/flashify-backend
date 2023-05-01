@@ -21,7 +21,7 @@ class User implements AggregateRoot
 
     private Uuid $uuid;
     private Login $login;
-    private ?Email $email;
+    private ?UserEmail $email;
     private ?UserPhoneNumber $phone;
     private ?UserName $userName;
     private ?Sex $sex;
@@ -74,7 +74,7 @@ class User implements AggregateRoot
     /**
      * @return Email|null
      */
-    public function getEmail(): ?Email
+    public function getEmail(): ?UserEmail
     {
         return $this->email;
     }
