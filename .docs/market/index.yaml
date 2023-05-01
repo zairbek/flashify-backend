@@ -28,6 +28,10 @@ paths:
   /api/market/v1/auth/phone/sign-in:
     $ref: './paths/auth/phone/signIn.yaml'
 
+  /api/market/v1/auth/email/request:
+    $ref: './paths/auth/email/request.yaml'
+  /api/market/v1/auth/email/sign-in:
+    $ref: './paths/auth/email/signIn.yaml'
 
 
 components:

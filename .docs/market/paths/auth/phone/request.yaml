@@ -1,4 +1,5 @@
 post:
+  summary: Вход или регистрация. Отправка смс кода
   tags:
     - Auth
   parameters:

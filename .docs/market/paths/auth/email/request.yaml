@@ -1,5 +1,5 @@
 post:
-  summary: Вход или регистрация. "по номеру телефона и коду"
+  summary: Вход по почту. Отправка кода
   tags:
     - Auth
   parameters:
@@ -13,14 +13,10 @@ post:
         schema:
           type: object
           properties:
-            phone:
+            email:
               required: true
               type: string
-              example: '+996772119663'
-            code:
-              required: true
-              type: string
-              example: '119663'
+              example: 'john@example.com'
   responses:
     '200':
       $ref: '../../../index.yaml#/components/responses/ok'
@@ -35,11 +31,7 @@ post:
               errors:
                 type: object
                 properties:
-                  phone:
-                    type: array
-                    items:
-                      type: string
-                  code:
+                  email:
                     type: array
                     items:
                       type: string
