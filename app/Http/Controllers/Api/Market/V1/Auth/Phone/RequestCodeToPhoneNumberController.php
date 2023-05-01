@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaPhoneDto;
-use MarketPlace\Market\Auth\Domain\Service\AuthorizeService;
+use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Market\Auth\Infrastructure\Exception\SendSmsThrottleException;
 
 class RequestCodeToPhoneNumberController extends Controller

@@ -13,7 +13,7 @@ use Illuminate\Validation\ValidationException;
 use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
 use MarketPlace\Market\Auth\Application\Dto\SignInWithPhoneDto;
-use MarketPlace\Market\Auth\Domain\Service\AuthorizeService;
+use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Market\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;

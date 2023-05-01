@@ -7,8 +7,8 @@ namespace MarketPlace\Market\Auth\Infrastructure\ServiceProvider;
 use App;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
-use MarketPlace\Market\Auth\Domain\Service\AuthorizeService;
 use MarketPlace\Market\Auth\Infrastructure\Adapter\UserAdapter;
 
 class AuthServiceProvider extends ServiceProvider

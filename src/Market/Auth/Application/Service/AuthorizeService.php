@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Market\Auth\Domain\Service;
+namespace MarketPlace\Market\Auth\Application\Service;
 
 use Exception;
 use MarketPlace\Common\Domain\Events\EventDispatcher;

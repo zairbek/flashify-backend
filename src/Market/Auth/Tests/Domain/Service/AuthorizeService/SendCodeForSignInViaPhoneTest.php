@@ -10,9 +10,9 @@ use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Tests\TestCase;
 use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaPhoneDto;
+use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
-use MarketPlace\Market\Auth\Domain\Service\AuthorizeService;
 
 class SendCodeForSignInViaPhoneTest extends TestCase
 {
