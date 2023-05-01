@@ -24,6 +24,7 @@ use MarketPlace\Market\Auth\Domain\Entity\User;
 use MarketPlace\Market\Auth\Domain\Entity\UserEmail;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Domain\ValueObject\UserId;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserEmailNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Service\TokenService;
 use MarketPlace\Market\User\Infrastructure\Api\UserApi;
@@ -158,5 +159,31 @@ class UserAdapter implements UserAdapterInterface
             'login' => $user->getLogin()->getLogin(),
             'phoneUuid' => $user->getPhone()->getUuid()->getId(),
         ]);
+    }
+
+    /**
+     * @throws UserEmailNotFoundException
+     */
+    public function findUserEmail(Email $email): UserEmail
+    {
+        $userEmail = $this->api->findUserEmail($email->getEmail());
+
+        if (empty($userEmail)) {
+            throw new UserEmailNotFoundException();
+        }
+
+        return $this->hydrator->hydrate(UserEmail::class, [
+            'uuid' => new Uuid($userEmail['uuid']),
+            'email' => new Email($userEmail['email']),
+            'confirmationCode' => $userEmail['confirmationCode'] ? new ConfirmationCode($userEmail['confirmationCode']) : null,
+            'sendAt' => $userEmail['sendAt'] ? SendAt::fromIsoFormat($userEmail['sendAt']) : null,
+            'verifiedAt' => $userEmail['verifiedAt'] ? VerifiedAt::fromIsoFormat($userEmail['verifiedAt']) : null,
+            'userUuid' => new UserId(new Uuid($userEmail['userUuid'])),
+        ]);
+    }
+
+    public function updateUserEmail(UserEmail $userEmail): void
+    {
+        $this->api->updateUserEmail($userEmail->toArray());
     }
 }

@@ -10,18 +10,22 @@ use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
+use MarketPlace\Common\Domain\ValueObject\Email;
 use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaEmailDto;
 use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaPhoneDto;
 use MarketPlace\Market\Auth\Application\Dto\SignInWithPhoneDto;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
+use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForEmailEvent;
 use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForPhoneNumberEvent;
 use MarketPlace\Market\Auth\Domain\Events\UserAuthorizedEvent;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\SendSmsThrottleException;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserEmailNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Listener\SendConfirmationCodeToPhoneNumberListener;
@@ -35,6 +39,9 @@ class AuthorizeService
         ],
         UserAuthorizedEvent::class => [
             UserAuthorizedListener::class
+        ],
+        SendConfirmationCodeForEmailEvent::class => [
+
         ]
     ];
 
@@ -111,5 +118,20 @@ class AuthorizeService
         $this->eventDispatcher->dispatch($user->releaseEvents());
 
         return $this->userAdapter->authorize($user);
+    }
+
+    /**
+     * @throws SendSmsThrottleException
+     * @throws UserEmailNotFoundException
+     */
+    public function sendCodeForSignInViaEmail(SendCodeForSignInViaEmailDto $dto): void
+    {
+        $email = new Email($dto->email);
+
+        $userEmail = $this->userAdapter->findUserEmail($email);
+        $userEmail->sendConfirmationCode();
+
+        $this->userAdapter->updateUserEmail($userEmail);
+        $this->eventDispatcher->dispatch($userEmail->releaseEvents());
     }
 }
