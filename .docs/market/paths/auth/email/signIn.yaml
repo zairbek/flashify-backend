@@ -23,7 +23,7 @@ post:
               example: '119663'
   responses:
     '200':
-      $ref: '../../../index.yaml#/components/responses/ok'
+      $ref: '../../../index.yaml#/components/responses/tokens'
     '422':
       description:
       content:

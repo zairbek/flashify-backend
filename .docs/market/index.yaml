@@ -59,6 +59,21 @@ components:
               errors:
                 type: string
                 example: error message
+    tokens:
+      description: Токены авторизации
+      content:
+        application/json:
+          schema:
+            properties:
+              accessToken:
+                type: string
+              lifeTime:
+                type: integer
+              refreshToken:
+                type: string
+              type:
+                type: string
+
   parameters:
     clientId:
       name: client-id
