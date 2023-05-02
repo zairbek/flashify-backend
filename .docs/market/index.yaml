@@ -6,7 +6,7 @@ info:
 
 servers:
   - url: http://market.loc
-    description: local dev api
+    description: local api
 
 tags:
   - name: HealthChecks
@@ -15,13 +15,7 @@ tags:
 
 paths:
   /api/market/v1/healthCheck:
-    get:
-      tags:
-        - HealthChecks
-      summary: Проверка состояния системы
-      responses:
-        '200':
-          $ref: '#/components/responses/ok'
+    $ref: './paths/healthCheck.yaml'
 
   /api/market/v1/auth/phone/request:
     $ref: './paths/auth/phone/request.yaml'
@@ -33,6 +27,10 @@ paths:
   /api/market/v1/auth/email/sign-in:
     $ref: './paths/auth/email/signIn.yaml'
 
+  /api/market/v1/auth/refresh-token:
+    $ref: './paths/auth/refreshToken.yaml'
+  /api/market/v1/auth/sign-out:
+    $ref: './paths/auth/signOut.yaml'
 
 components:
   securitySchemes:

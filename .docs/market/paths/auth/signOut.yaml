@@ -1,0 +1,11 @@
+get:
+  summary: Выход из аккаунта
+  tags:
+    - Auth
+  parameters:
+    - $ref: '../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../index.yaml#/components/parameters/clientSecret'
+
+  responses:
+    '200':
+      $ref: '../../index.yaml#/components/responses/ok'

@@ -1,0 +1,37 @@
+post:
+  summary: Обновление токена
+  tags:
+    - Auth
+  parameters:
+    - $ref: '../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../index.yaml#/components/parameters/clientSecret'
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            refreshToken:
+              required: true
+              type: string
+  responses:
+    '200':
+      $ref: '../../index.yaml#/components/responses/tokens'
+    '422':
+      description:
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+              errors:
+                type: object
+                properties:
+                  refreshToken:
+                    type: array
+                    items:
+                      type: string
+    '400':
+      $ref: '../../index.yaml#/components/responses/error'
