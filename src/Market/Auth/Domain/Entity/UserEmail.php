@@ -107,4 +107,20 @@ class UserEmail implements AggregateRoot
 
         $this->recordEvent(new SendConfirmationCodeForEmailEvent($this->getEmail(), $this->getConfirmationCode()));
     }
+
+    public function isCodeNotMatch(ConfirmationCode $code): bool
+    {
+        return !$this->isCodeMatch($code);
+    }
+
+    public function isCodeMatch(ConfirmationCode $code): bool
+    {
+        return $this->confirmationCode?->getCode() === $code->getCode();
+    }
+
+    public function clearTempData(): void
+    {
+        $this->confirmationCode = null;
+        $this->sendAt = null;
+    }
 }

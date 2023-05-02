@@ -12,9 +12,12 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
+use MarketPlace\Market\Auth\Application\Dto\SignInWithEmailDto;
 use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Market\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
+use MarketPlace\Market\Auth\Infrastructure\Exception\UserEmailNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
+use Throwable;
 
 class SignInWithEmailAndCodeController extends Controller
 {
@@ -26,32 +29,31 @@ class SignInWithEmailAndCodeController extends Controller
     }
 
     /**
-     * @throws ValidationException
+     * @throws ValidationException|Throwable
      */
     public function __invoke(SignInWithEmailAndCodeRequest $request, Response $response): JsonResponse
     {
-//        DB::beginTransaction();
-//
-//        try {
-//            $token = $this->service->signInWithPhone(new SignInWithPhoneDto(
-//                regionIsoCode: 'KG',
-//                phone: $request->get('phone'),
-//                confirmationCode: $request->get('code')
-//            ));
-//            DB::commit();
-//            return response()->json($token->toArray());
-//        } catch (UserIsBannedException $e) {
-//            DB::rollBack();
-//            return response()->json(['message' => 'Аккаунт пользователя забанен'], Response::HTTP_FORBIDDEN);
-//        } catch (UserIsInactiveException $e) {
-//            DB::rollBack();
-//            return response()->json(['message' => 'Аккаунт пользователя неактивен'], Response::HTTP_FORBIDDEN);
-//        } catch (ConfirmationCodeIsNotMatchException $e) {
-//            DB::rollBack();
-//            throw ValidationException::withMessages(['code' => ['Неправильный код подтверждение']]);
-//        } catch (UserPhoneNotFoundException|UserNotFoundException $e) {
-//            DB::rollBack();
-//            throw ValidationException::withMessages(['phone' => ['phone not found']]);
-//        }
+        DB::beginTransaction();
+
+        try {
+            $token = $this->service->signInWithEmail(new SignInWithEmailDto(
+                email: $request->get('email'),
+                confirmationCode: $request->get('code')
+            ));
+            DB::commit();
+            return response()->json($token->toArray());
+        } catch (UserIsBannedException $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Аккаунт пользователя забанен'], Response::HTTP_FORBIDDEN);
+        } catch (UserIsInactiveException $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Аккаунт пользователя неактивен'], Response::HTTP_FORBIDDEN);
+        } catch (ConfirmationCodeIsNotMatchException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['code' => ['Неправильный код подтверждение']]);
+        } catch (UserNotFoundException|UserEmailNotFoundException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['email' => ['phone not found']]);
+        }
     }
 }

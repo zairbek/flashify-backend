@@ -15,6 +15,7 @@ use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaEmailDto;
 use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaPhoneDto;
+use MarketPlace\Market\Auth\Application\Dto\SignInWithEmailDto;
 use MarketPlace\Market\Auth\Application\Dto\SignInWithPhoneDto;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
@@ -134,5 +135,36 @@ class AuthorizeService
 
         $this->userAdapter->updateUserEmail($userEmail);
         $this->eventDispatcher->dispatch($userEmail->releaseEvents());
+    }
+
+    /**
+     * @throws UserNotFoundException
+     * @throws UserEmailNotFoundException
+     * @throws ConfirmationCodeIsNotMatchException
+     * @throws UserIsBannedException
+     * @throws UserIsInactiveException
+     */
+    public function signInWithEmail(SignInWithEmailDto $dto): Token
+    {
+        $email = new Email($dto->email);
+        $userEmail = $this->userAdapter->findUserEmail($email);
+
+        if ($userEmail->isCodeNotMatch(new ConfirmationCode($dto->confirmationCode))) {
+            throw new ConfirmationCodeIsNotMatchException();
+        }
+
+        $userEmail->clearTempData();
+        $this->userAdapter->updateUserEmail($userEmail);
+
+        $user = $this->userAdapter->findUser($userEmail->getUserUuid());
+        if ($user->getStatus()->isBanned()) {
+            throw new UserIsBannedException();
+        }
+        if ($user->getStatus()->isInactive()) {
+            throw new UserIsInactiveException();
+        }
+        $user->authorize();
+
+        return $this->userAdapter->authorize($user);
     }
 }
