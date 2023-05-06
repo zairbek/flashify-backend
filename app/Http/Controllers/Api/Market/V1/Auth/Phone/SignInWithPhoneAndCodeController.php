@@ -17,6 +17,7 @@ use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Market\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
+use Throwable;
 
 class SignInWithPhoneAndCodeController extends Controller
 {
@@ -28,7 +29,11 @@ class SignInWithPhoneAndCodeController extends Controller
     }
 
     /**
+     * @param SignInWithPhoneAndCodeRequest $request
+     * @param Response $response
+     * @return JsonResponse
      * @throws ValidationException
+     * @throws Throwable
      */
     public function __invoke(SignInWithPhoneAndCodeRequest $request, Response $response): JsonResponse
     {

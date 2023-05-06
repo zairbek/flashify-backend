@@ -7,7 +7,6 @@ use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
 use MarketPlace\Market\Auth\Domain\Entity\UserEmail;
-use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Domain\ValueObject\UserId;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserEmailNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
@@ -34,8 +33,6 @@ interface UserAdapterInterface
      * @throws UserNotFoundException
      */
     public function findUser(UserId $getUserId): User;
-
-    public function authorize(User $user): Token;
 
     public function createUserViaPhone(User $user): void;
 

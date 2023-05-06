@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Market\V1\Auth\Email\RequestCodeToEmailController;
 use App\Http\Controllers\Api\Market\V1\Auth\Email\SignInWithEmailAndCodeController;
 use App\Http\Controllers\Api\Market\V1\Auth\Phone\RequestCodeToPhoneNumberController;
 use App\Http\Controllers\Api\Market\V1\Auth\Phone\SignInWithPhoneAndCodeController;
+use App\Http\Controllers\Api\Market\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Market\V1\DocumentationController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
@@ -38,4 +39,5 @@ Route::prefix('auth')->group(function () {
         Route::post('request', RequestCodeToEmailController::class);
         Route::post('sign-in', SignInWithEmailAndCodeController::class);
     });
+    Route::post('refresh-token', RefreshTokenController::class);
 });

@@ -27,6 +27,7 @@ use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
 use MarketPlace\Market\Auth\Domain\Entity\User;
+use MarketPlace\Market\Auth\Domain\ValueObject\RefreshToken;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Infrastructure\Exception\NotGivenClientIdAndSecretForTokenServiceException;
 use Psr\Http\Message\ResponseInterface;
@@ -38,9 +39,13 @@ class TokenService
     private string|null $clientId;
     private string|null $clientSecret;
 
+    /**
+     * @throws NotGivenClientIdAndSecretForTokenServiceException
+     */
     public function __construct()
     {
         $this->server = App::make(AuthorizationServer::class);
+        /** @var Request $request */
         $request = App::get('request');
 
         $clientId = $request->header('client-id');
@@ -67,6 +72,37 @@ class TokenService
         $passportToken = $this->createPassportTokenByUser($user, $this->clientId);
         $bearerToken = $this->sendBearerTokenResponse($passportToken['access_token'], $passportToken['refresh_token']);
         $tokens = json_decode($bearerToken->getBody()->__toString(), true, 512, JSON_THROW_ON_ERROR);
+
+        return new Token(
+            accessToken: $tokens['access_token'],
+            tokenType: $tokens['token_type'],
+            refreshToken: $tokens['refresh_token'],
+            accessTokenLifeTime: $tokens['expires_in']
+        );
+    }
+
+    /**
+     * @throws OAuthServerException
+     * @throws JsonException
+     */
+    public function refreshing(RefreshToken $refreshToken): Token
+    {
+        $psrResponse = $this
+            ->server
+            ->respondToAccessTokenRequest(
+                (new GuzzleRequest('POST', ''))
+                    ->withParsedBody([
+                        'grant_type' => 'refresh_token',
+                        'refresh_token' => $refreshToken->getRefreshToken(),
+                        'client_id' => $this->clientId,
+                        'client_secret' => $this->clientSecret,
+                        'scope' => '',
+                    ]),
+                new GuzzleResponse()
+            )
+        ;
+
+        $tokens = json_decode((string)$psrResponse->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         return new Token(
             accessToken: $tokens['access_token'],

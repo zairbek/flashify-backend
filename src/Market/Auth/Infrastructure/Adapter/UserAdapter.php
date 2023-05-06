@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace MarketPlace\Market\Auth\Infrastructure\Adapter;
 
-use League\OAuth2\Server\Exception\OAuthServerException;
-use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
 use LogicException;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
@@ -22,11 +20,9 @@ use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
 use MarketPlace\Market\Auth\Domain\Entity\UserEmail;
-use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Domain\ValueObject\UserId;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserEmailNotFoundException;
 use MarketPlace\Market\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
-use MarketPlace\Market\Auth\Infrastructure\Service\TokenService;
 use MarketPlace\Market\User\Infrastructure\Api\UserApi;
 
 class UserAdapter implements UserAdapterInterface
@@ -136,16 +132,6 @@ class UserAdapter implements UserAdapterInterface
                 : null,
             'status' => new UserStatus($user['status']),
         ]);
-    }
-
-    /**
-     * @throws UniqueTokenIdentifierConstraintViolationException
-     * @throws OAuthServerException
-     * @throws \JsonException
-     */
-    public function authorize(User $user): Token
-    {
-        return (new TokenService())->generate($user);
     }
 
     public function createUserViaPhone(User $user): void
