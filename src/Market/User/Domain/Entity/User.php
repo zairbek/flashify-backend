@@ -94,4 +94,26 @@ class User implements AggregateRoot
     {
         return $this->phone;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->getUuid()->getId(),
+            'login' => $this->getLogin()->getLogin(),
+            'email' => $this->getEmail()?->getEmail()->getEmail(),
+            'phone' => $this->getPhone()
+                ? [
+                    'regionIsoCode' => $this->getPhone()->getPhone()->getRegionCode(),
+                    'number' => $this->getPhone()->getPhone()->toString()
+                ]
+                : null,
+            'name' => [
+                'firstName' => $this->getUserName()?->getFirstName(),
+                'lastName' => $this->getUserName()?->getLastName(),
+                'middleName' => $this->getUserName()?->getMiddleName(),
+            ],
+            'sex' => $this->getSex()?->getSex(),
+            'status' => $this->getStatus()->getStatus()
+        ];
+    }
 }

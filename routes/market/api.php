@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Market\V1\Auth\Phone\SignInWithPhoneAndCodeControll
 use App\Http\Controllers\Api\Market\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Market\V1\Auth\SignOutController;
 use App\Http\Controllers\Api\Market\V1\DocumentationController;
+use App\Http\Controllers\Api\Market\V1\Me\GetMeController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
@@ -42,4 +43,9 @@ Route::prefix('auth')->group(function () {
     });
     Route::post('refresh-token', RefreshTokenController::class);
     Route::get('sign-out', SignOutController::class)->middleware(['auth:api']);
+});
+
+
+Route::middleware(['auth:api'])->group(function () {
+    Route::get('me', GetMeController::class);
 });

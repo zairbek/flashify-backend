@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MarketPlace\Market\User\Infrastructure\Repository;
 
 use App\Models\User as UserDB;
+use Auth;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
 use MarketPlace\Common\Domain\ValueObject\Email;
@@ -23,6 +24,7 @@ use MarketPlace\Market\User\Domain\Repository\UserRepositoryInterface;
 use MarketPlace\Market\User\Domain\ValueObject\UserId;
 use MarketPlace\Market\User\Domain\ValueObject\UserName;
 use MarketPlace\Market\User\Infrastructure\Exception\UserNotFoundException;
+use MarketPlace\Market\User\Infrastructure\Exception\UserUnauthenticatedException;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -54,6 +56,29 @@ class UserRepository implements UserRepositoryInterface
             throw new UserNotFoundException();
         }
 
+        return $this->userHydrator($userDb);
+    }
+
+    /**
+     * @return User
+     * @throws UserUnauthenticatedException
+     */
+    public function me(): User
+    {
+        /** @var UserDB $userDb */
+        $userDb = Auth::user();
+
+        if (is_null($userDb)) {
+            throw new UserUnauthenticatedException();
+        }
+
+        $userDb->load(['phone', 'email']);
+
+        return $this->userHydrator($userDb);
+    }
+
+    private function userHydrator(UserDB $userDb): User
+    {
         return $this->hydrator->hydrate(User::class, [
             'uuid' => new Uuid($userDb->uuid),
             'login' => new Login($userDb->login),
@@ -64,12 +89,12 @@ class UserRepository implements UserRepositoryInterface
             ),
             'phone' => $userDb->phone
                 ? $this->hydrator->hydrate(UserPhoneNumber::class, [
-                     'uuid' => new Uuid($userDb->phone->uuid),
-                     'phone' => Phone::fromString($userDb->phone->region_iso_code, $userDb->phone->phone_number),
-                     'createdAt' => new CreatedAt($userDb->phone->created_at->toDateTime()),
-                     'userId' => $userDb->phone->user_id ? new UserId(new Uuid($userDb->phone->user_id)) : null,
-                     'confirmationCode' => $userDb->phone->confirmation_code ? new ConfirmationCode($userDb->phone->confirmation_code) : null,
-                     'sendAt' => $userDb->phone->send_at ? new SendAt($userDb->phone->send_at->toDateTime()) : null,
+                    'uuid' => new Uuid($userDb->phone->uuid),
+                    'phone' => Phone::fromString($userDb->phone->region_iso_code, $userDb->phone->phone_number),
+                    'createdAt' => new CreatedAt($userDb->phone->created_at->toDateTime()),
+                    'userId' => $userDb->phone->user_id ? new UserId(new Uuid($userDb->phone->user_id)) : null,
+                    'confirmationCode' => $userDb->phone->confirmation_code ? new ConfirmationCode($userDb->phone->confirmation_code) : null,
+                    'sendAt' => $userDb->phone->send_at ? new SendAt($userDb->phone->send_at->toDateTime()) : null,
                 ])
                 : null,
             'email' => $userDb->email
