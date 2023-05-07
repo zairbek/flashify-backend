@@ -21,12 +21,15 @@ use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaEmailDto;
 use MarketPlace\Market\Auth\Application\Dto\SendCodeForSignInViaPhoneDto;
 use MarketPlace\Market\Auth\Application\Dto\SignInWithEmailDto;
 use MarketPlace\Market\Auth\Application\Dto\SignInWithPhoneDto;
+use MarketPlace\Market\Auth\Application\Dto\SignOutDto;
 use MarketPlace\Market\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Market\Auth\Domain\Entity\PhoneNumber;
 use MarketPlace\Market\Auth\Domain\Entity\User;
 use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForEmailEvent;
 use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForPhoneNumberEvent;
 use MarketPlace\Market\Auth\Domain\Events\UserAuthorizedEvent;
+use MarketPlace\Market\Auth\Domain\Repository\TokenRepositoryInterface;
+use MarketPlace\Market\Auth\Domain\ValueObject\JwtTokenId;
 use MarketPlace\Market\Auth\Domain\ValueObject\RefreshToken;
 use MarketPlace\Market\Auth\Domain\ValueObject\Token;
 use MarketPlace\Market\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
@@ -56,11 +59,13 @@ class AuthorizeService
 
     private UserAdapterInterface $userAdapter;
     private EventDispatcher $eventDispatcher;
+    private TokenRepositoryInterface $tokenRepository;
 
-    public function __construct(UserAdapterInterface $userAdapter)
+    public function __construct(UserAdapterInterface $userAdapter, TokenRepositoryInterface $tokenRepository)
     {
         $this->userAdapter = $userAdapter;
         $this->eventDispatcher = new EventDispatcher($this->listeners);
+        $this->tokenRepository = $tokenRepository;
     }
 
     /**
@@ -195,5 +200,12 @@ class AuthorizeService
     public function refreshingToken(RefreshingTokenDto $dto): Token
     {
         return (new TokenService())->refreshing(new RefreshToken(refreshToken: $dto->refreshToken));
+    }
+
+    public function signOut(SignOutDto $dto): void
+    {
+        $jwtTokenId = JwtTokenId::fromJwtToken($dto->bearerToken);
+
+        $this->tokenRepository->signOut($jwtTokenId);
     }
 }

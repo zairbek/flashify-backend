@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Market\V1\Auth\Email\SignInWithEmailAndCodeControll
 use App\Http\Controllers\Api\Market\V1\Auth\Phone\RequestCodeToPhoneNumberController;
 use App\Http\Controllers\Api\Market\V1\Auth\Phone\SignInWithPhoneAndCodeController;
 use App\Http\Controllers\Api\Market\V1\Auth\RefreshTokenController;
+use App\Http\Controllers\Api\Market\V1\Auth\SignOutController;
 use App\Http\Controllers\Api\Market\V1\DocumentationController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
@@ -26,7 +27,7 @@ Route::prefix('documentation')->group(function () {
 });
 
 
-Route::get('healthCheck', function () {
+Route::get('healthCheck', static function () {
     return Response::json(['message' => 'ok']);
 });
 
@@ -40,4 +41,5 @@ Route::prefix('auth')->group(function () {
         Route::post('sign-in', SignInWithEmailAndCodeController::class);
     });
     Route::post('refresh-token', RefreshTokenController::class);
+    Route::get('sign-out', SignOutController::class)->middleware(['auth:api']);
 });
