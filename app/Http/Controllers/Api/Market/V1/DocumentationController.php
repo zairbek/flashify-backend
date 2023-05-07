@@ -19,7 +19,7 @@ class DocumentationController extends Controller
 
     public function file(): BinaryFileResponse
     {
-        $docs = storage_path('documentation/backoffice.yaml');
+        $docs = storage_path('documentation/market.yaml');
         return response()->file($docs);
     }
 }
