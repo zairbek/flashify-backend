@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Foundation\Application;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class DocumentationController extends Controller
 {
@@ -16,9 +17,9 @@ class DocumentationController extends Controller
         return view('api.v1.market.documentation');
     }
 
-    public function file()
+    public function file(): BinaryFileResponse
     {
-        $docs = storage_path('documentation/market.yaml');
+        $docs = storage_path('documentation/backoffice.yaml');
         return response()->file($docs);
     }
 }

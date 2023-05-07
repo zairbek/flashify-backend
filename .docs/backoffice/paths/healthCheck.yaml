@@ -1,0 +1,7 @@
+get:
+  tags:
+    - HealthChecks
+  summary: Проверка состояния системы
+  responses:
+    '200':
+      $ref: '../index.yaml#/components/responses/ok'

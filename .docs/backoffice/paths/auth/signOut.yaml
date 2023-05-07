@@ -1,0 +1,15 @@
+get:
+  summary: Выход из аккаунта
+  security:
+    - bearerAuth: []
+  tags:
+    - Auth
+  parameters:
+    - $ref: '../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../index.yaml#/components/parameters/clientSecret'
+
+  responses:
+    '204':
+      $ref: '../../index.yaml#/components/responses/noContent'
+    '400':
+      $ref: '../../index.yaml#/components/responses/error'

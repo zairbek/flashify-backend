@@ -1,0 +1,103 @@
+openapi: 3.0.0
+
+info:
+  title: MarketPlace Project
+  version: 1.0.0
+
+servers:
+  - url: http://market.loc/api/backoffice/v1
+    description: local api
+
+tags:
+  - name: HealthChecks
+    description: Проверка состояния системы
+  - name: Auth
+  - name: Me
+
+paths:
+  # HEALTH CHECK
+  /healthCheck:
+    $ref: './paths/healthCheck.yaml'
+  # END HEALTH CHECK
+
+  # AUTH
+  /auth/email/sign-in:
+    $ref: './paths/auth/signIn.yaml'
+  /auth/refresh-token:
+    $ref: './paths/auth/refreshToken.yaml'
+  /auth/sign-out:
+    $ref: './paths/auth/signOut.yaml'
+  # END AUTH
+
+  # ME
+  /me:
+    $ref: './paths/me/getMe.yaml'
+  # END ME
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    ok:
+      description: Ok
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+                example: Ok
+    noContent:
+      description: No Content
+    error:
+      description: error
+      content:
+        application/json:
+          schema:
+            properties:
+              errors:
+                type: string
+                example: error message
+    unauthenticated:
+      description: Unauthenticated
+      content:
+        application/json:
+          schema:
+            properties:
+              error:
+                type: string
+                example: unauthenticated
+    tokens:
+      description: Токены авторизации
+      content:
+        application/json:
+          schema:
+            properties:
+              accessToken:
+                type: string
+              lifeTime:
+                type: integer
+              refreshToken:
+                type: string
+              type:
+                type: string
+
+  parameters:
+    clientId:
+      name: client-id
+      in: header
+      description: Id приложение клиента
+      required: true
+      schema:
+        type: string
+    clientSecret:
+      name: client-secret
+      in: header
+      description: Ключ приложение клиента
+      required: true
+      schema:
+        type: string
+

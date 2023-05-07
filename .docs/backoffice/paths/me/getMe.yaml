@@ -1,0 +1,23 @@
+get:
+  summary: Получение инфу о пользователя
+  tags:
+    - Me
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../index.yaml#/components/parameters/clientSecret'
+  responses:
+    200:
+      description: User info
+      content:
+        application/json:
+          schema:
+            properties:
+              data:
+                type: object
+                $ref: '../../components/schemas/User.yaml#/Detail'
+    400:
+      $ref: '../../index.yaml#/components/responses/error'
+    401:
+      $ref: '../../index.yaml#/components/responses/unauthenticated'

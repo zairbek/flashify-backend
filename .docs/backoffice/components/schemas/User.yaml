@@ -1,0 +1,32 @@
+Detail:
+  type: object
+  properties:
+    uuid:
+      type: string
+    login:
+      type: string
+    email:
+      type: string
+      nullable: true
+    phone:
+      type: string
+      nullable: true
+    name:
+      type: object
+      properties:
+        firstName:
+          type: string
+          nullable: true
+        lastName:
+          type: string
+          nullable: true
+        middleName:
+          type: string
+          nullable: true
+    sex:
+      nullable: true
+      type: string
+      enum: [male, female]
+    status:
+      type: string
+      enum: [active, inactive, ban]
