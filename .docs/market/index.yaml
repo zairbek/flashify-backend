@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: http://market.loc
+  - url: http://market.loc/api/market/v1
     description: local api
 
 tags:
@@ -16,29 +16,29 @@ tags:
 
 paths:
   # HEALTH CHECK
-  /api/market/v1/healthCheck:
+  /healthCheck:
     $ref: './paths/healthCheck.yaml'
   # END HEALTH CHECK
 
   # AUTH
-  /api/market/v1/auth/phone/request:
+  /auth/phone/request:
     $ref: './paths/auth/phone/request.yaml'
-  /api/market/v1/auth/phone/sign-in:
+  /auth/phone/sign-in:
     $ref: './paths/auth/phone/signIn.yaml'
 
-  /api/market/v1/auth/email/request:
+  /auth/email/request:
     $ref: './paths/auth/email/request.yaml'
-  /api/market/v1/auth/email/sign-in:
+  /auth/email/sign-in:
     $ref: './paths/auth/email/signIn.yaml'
 
-  /api/market/v1/auth/refresh-token:
+  /auth/refresh-token:
     $ref: './paths/auth/refreshToken.yaml'
-  /api/market/v1/auth/sign-out:
+  /auth/sign-out:
     $ref: './paths/auth/signOut.yaml'
   # END AUTH
 
   # ME
-  /api/market/v1/me:
+  /me:
     $ref: './paths/me/getMe.yaml'
   # END ME
 
