@@ -48,6 +48,9 @@ components:
               message:
                 type: string
                 example: Ok
+    noContent:
+      description: No Content
+
     error:
       description: error
       content:
