@@ -21,7 +21,7 @@ paths:
   # END HEALTH CHECK
 
   # AUTH
-  /auth/email/sign-in:
+  /auth/sign-in:
     $ref: './paths/auth/signIn.yaml'
   /auth/refresh-token:
     $ref: './paths/auth/refreshToken.yaml'

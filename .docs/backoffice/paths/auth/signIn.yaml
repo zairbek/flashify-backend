@@ -17,7 +17,7 @@ post:
               required: true
               type: string
               example: 'john@example.com'
-            code:
+            password:
               required: true
               type: string
               example: '119663'
