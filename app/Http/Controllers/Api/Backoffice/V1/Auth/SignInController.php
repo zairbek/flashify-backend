@@ -22,7 +22,7 @@ use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
 use Throwable;
 
-class SignInWithEmailAndCodeController extends Controller
+class SignInController extends Controller
 {
     private AuthorizeService $service;
 

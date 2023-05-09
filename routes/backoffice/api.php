@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\Backoffice\V1\Auth\SignInWithEmailAndCodeController;
+use App\Http\Controllers\Api\Backoffice\V1\Auth\SignInController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignOutController;
 use App\Http\Controllers\Api\Backoffice\V1\DocumentationController;
@@ -30,7 +30,7 @@ Route::get('healthCheck', static function () {
 });
 
 Route::prefix('auth')->group(function () {
-    Route::post('sign-in', SignInWithEmailAndCodeController::class);
+    Route::post('sign-in', SignInController::class);
     Route::post('refresh-token', RefreshTokenController::class);
     Route::get('sign-out', SignOutController::class)->middleware(['auth:api']);
 });
