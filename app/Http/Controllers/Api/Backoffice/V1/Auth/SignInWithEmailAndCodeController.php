@@ -5,18 +5,21 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Backoffice\V1\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Market\Auth\Email\SignInWithEmailAndCodeRequest;
+use App\Http\Requests\Backoffice\Auth\SignInRequest;
 use DB;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use JsonException;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use MarketPlace\Backoffice\Auth\Application\Dto\SignInDto;
+use MarketPlace\Backoffice\Auth\Application\Service\AuthorizeService;
+use MarketPlace\Backoffice\Auth\Infrastructure\Exception\NotGivenClientIdAndSecretForTokenServiceException;
+use MarketPlace\Backoffice\Auth\Infrastructure\Exception\UserCredentialsIncorrectException;
 use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
-use MarketPlace\Market\Auth\Application\Dto\SignInWithEmailDto;
-use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
-use MarketPlace\Market\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
-use MarketPlace\Market\Auth\Infrastructure\Exception\UserEmailNotFoundException;
-use MarketPlace\Market\Auth\Infrastructure\Exception\UserNotFoundException;
 use Throwable;
 
 class SignInWithEmailAndCodeController extends Controller
@@ -31,29 +34,35 @@ class SignInWithEmailAndCodeController extends Controller
     /**
      * @throws ValidationException|Throwable
      */
-    public function __invoke(SignInWithEmailAndCodeRequest $request, Response $response): JsonResponse
+    public function __invoke(SignInRequest $request, Response $response): JsonResponse
     {
         DB::beginTransaction();
 
         try {
-            $token = $this->service->signInWithEmail(new SignInWithEmailDto(
+            $token = $this->service->signIn(new SignInDto(
                 email: $request->get('email'),
-                confirmationCode: $request->get('code')
+                password: $request->get('password')
             ));
             DB::commit();
             return response()->json($token->toArray());
+        } catch (UserCredentialsIncorrectException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['email' => ['Неверный логин или пароль']]);
         } catch (UserIsBannedException $e) {
             DB::rollBack();
             return response()->json(['message' => 'Аккаунт пользователя забанен'], Response::HTTP_FORBIDDEN);
         } catch (UserIsInactiveException $e) {
             DB::rollBack();
             return response()->json(['message' => 'Аккаунт пользователя неактивен'], Response::HTTP_FORBIDDEN);
-        } catch (ConfirmationCodeIsNotMatchException $e) {
+        } catch (
+            OAuthServerException
+            | NotGivenClientIdAndSecretForTokenServiceException
+            | UniqueTokenIdentifierConstraintViolationException
+            | JsonException
+            | Exception $e
+        ) {
             DB::rollBack();
-            throw ValidationException::withMessages(['code' => ['Неправильный код подтверждение']]);
-        } catch (UserNotFoundException|UserEmailNotFoundException $e) {
-            DB::rollBack();
-            throw ValidationException::withMessages(['email' => ['phone not found']]);
+            return response()->json(['message' => 'Аккаунт пользователя неактивен'], 400);
         }
     }
 }

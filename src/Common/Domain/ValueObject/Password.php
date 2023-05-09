@@ -24,4 +24,9 @@ class Password
     {
         return $this->password;
     }
+
+    public function getHash(): string
+    {
+        return password_hash($this->getPassword(), PASSWORD_BCRYPT);
+    }
 }

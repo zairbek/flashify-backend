@@ -195,8 +195,16 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+
         /*
-         * Domains
+         * Module Backoffice
+         */
+        MarketPlace\Backoffice\Auth\Infrastructure\ServiceProvider\AuthServiceProvider::class,
+        MarketPlace\Backoffice\User\Infrastructure\ServiceProvider\UserServiceProvider::class,
+
+
+        /*
+         * Module Market
          */
         MarketPlace\Market\Auth\Infrastructure\ServiceProvider\AuthServiceProvider::class,
         MarketPlace\Market\User\Infrastructure\ServiceProvider\UserServiceProvider::class,

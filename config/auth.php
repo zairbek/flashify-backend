@@ -43,7 +43,11 @@ return [
         'api' => [
             'driver' => 'passport',
             'provider' => 'users',
-        ]
+        ],
+        'api-backoffice' => [
+            'driver' => 'passport',
+            'provider' => 'admins',
+        ],
     ],
 
     /*
@@ -69,10 +73,10 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+         'admins' => [
+             'driver' => 'eloquent',
+             'table' => \App\Models\Admin::class,
+         ],
     ],
 
     /*
@@ -96,6 +100,12 @@ return [
 
     'passwords' => [
         'users' => [
+            'provider' => 'users',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+        'admins' => [
             'provider' => 'users',
             'table' => 'password_reset_tokens',
             'expire' => 60,
