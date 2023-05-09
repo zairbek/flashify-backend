@@ -7,8 +7,8 @@ namespace App\Http\Controllers\Api\Backoffice\V1\Me;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use MarketPlace\Market\User\Application\Service\UserService;
-use MarketPlace\Market\User\Infrastructure\Exception\UserUnauthenticatedException;
+use MarketPlace\Backoffice\Auth\Infrastructure\Exception\UserUnauthenticatedException;
+use MarketPlace\Backoffice\User\Application\Service\UserService;
 
 class GetMeController extends Controller
 {

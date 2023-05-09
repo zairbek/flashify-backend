@@ -36,6 +36,6 @@ Route::prefix('auth')->group(function () {
 });
 
 
-Route::middleware(['auth:api'])->group(function () {
+Route::middleware(['auth:api-backoffice'])->group(function () {
     Route::get('me', GetMeController::class);
 });
