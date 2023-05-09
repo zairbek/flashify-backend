@@ -18,6 +18,7 @@ use MarketPlace\Backoffice\Auth\Domain\ValueObject\RefreshToken;
 use MarketPlace\Backoffice\Auth\Domain\ValueObject\Token;
 use MarketPlace\Backoffice\Auth\Infrastructure\Exception\NotGivenClientIdAndSecretForTokenServiceException;
 use MarketPlace\Backoffice\Auth\Infrastructure\Exception\UserCredentialsIncorrectException;
+use MarketPlace\Backoffice\Auth\Infrastructure\Listener\UserAuthorizedListener;
 use MarketPlace\Backoffice\Auth\Infrastructure\Service\TokenService;
 use MarketPlace\Common\Domain\Events\EventDispatcher;
 use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;

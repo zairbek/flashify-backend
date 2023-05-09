@@ -10,8 +10,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\UnauthorizedException;
-use MarketPlace\Market\Auth\Application\Dto\SignOutDto;
-use MarketPlace\Market\Auth\Application\Service\AuthorizeService;
+use MarketPlace\Backoffice\Auth\Application\Dto\SignOutDto;
+use MarketPlace\Backoffice\Auth\Application\Service\AuthorizeService;
 
 class SignOutController extends Controller
 {

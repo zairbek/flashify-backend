@@ -32,7 +32,7 @@ Route::get('healthCheck', static function () {
 Route::prefix('auth')->group(function () {
     Route::post('sign-in', SignInController::class);
     Route::post('refresh-token', RefreshTokenController::class);
-    Route::get('sign-out', SignOutController::class)->middleware(['auth:api']);
+    Route::get('sign-out', SignOutController::class)->middleware(['auth:api-backoffice']);
 });
 
 
