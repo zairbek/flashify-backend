@@ -3,12 +3,7 @@ Detail:
   properties:
     uuid:
       type: string
-    login:
-      type: string
     email:
-      type: string
-      nullable: true
-    phone:
       type: string
       nullable: true
     name:
@@ -18,9 +13,6 @@ Detail:
           type: string
           nullable: true
         lastName:
-          type: string
-          nullable: true
-        middleName:
           type: string
           nullable: true
     sex:
