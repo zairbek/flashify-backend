@@ -82,7 +82,10 @@ class UserRepository implements UserRepositoryInterface
             ->where('email', $email->getEmail())
             ->first();
 
-        if (! password_verify($password->getPassword(), $userDb->getAuthPassword())) {
+        if (
+            is_null($userDb)
+            || ! password_verify($password->getPassword(), $userDb->getAuthPassword())
+        ) {
             throw new UserCredentialsIncorrectException();
         }
 

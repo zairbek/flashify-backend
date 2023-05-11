@@ -35,7 +35,6 @@ Route::prefix('auth')->group(function () {
     Route::get('sign-out', SignOutController::class)->middleware(['auth:api-backoffice']);
 });
 
-
 Route::middleware(['auth:api-backoffice'])->group(function () {
     Route::get('me', GetMeController::class);
 });

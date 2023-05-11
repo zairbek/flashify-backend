@@ -62,7 +62,7 @@ class SignInController extends Controller
             | Exception $e
         ) {
             DB::rollBack();
-            return response()->json(['message' => 'Аккаунт пользователя неактивен'], 400);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 }
