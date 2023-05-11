@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignInController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignOutController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\ListCategoriesController;
 use App\Http\Controllers\Api\Backoffice\V1\DocumentationController;
 use App\Http\Controllers\Api\Backoffice\V1\Me\GetMeController;
 use Illuminate\Support\Facades\Response;
@@ -37,4 +38,10 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware(['auth:api-backoffice'])->group(function () {
     Route::get('me', GetMeController::class);
+
+    Route::prefix('categories')->group(function () {
+        Route::get('', ListCategoriesController::class);
+    });
+
 });
+
