@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignInController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignOutController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\CreateCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\ListCategoriesController;
 use App\Http\Controllers\Api\Backoffice\V1\DocumentationController;
 use App\Http\Controllers\Api\Backoffice\V1\Me\GetMeController;
@@ -41,6 +42,7 @@ Route::middleware(['auth:api-backoffice'])->group(function () {
 
     Route::prefix('categories')->group(function () {
         Route::get('', ListCategoriesController::class);
+        Route::post('', CreateCategoryController::class);
     });
 
 });

@@ -201,6 +201,7 @@ return [
          */
         MarketPlace\Backoffice\Auth\Infrastructure\ServiceProvider\AuthServiceProvider::class,
         MarketPlace\Backoffice\User\Infrastructure\ServiceProvider\UserServiceProvider::class,
+        MarketPlace\Backoffice\Category\Infrastructure\ServiceProvider\CategoryServiceProvider::class,
 
 
         /*
