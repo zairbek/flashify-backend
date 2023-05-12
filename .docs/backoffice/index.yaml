@@ -13,6 +13,7 @@ tags:
     description: Проверка состояния системы
   - name: Auth
   - name: Me
+  - name: Categories
 
 paths:
   # HEALTH CHECK
@@ -34,6 +35,11 @@ paths:
     $ref: './paths/me/getMe.yaml'
   # END ME
 
+  # Categories
+  /categories:
+    $ref: './paths/categories/createCategory.yaml'
+  # END Categories
+
 components:
   securitySchemes:
     bearerAuth:
@@ -50,6 +56,15 @@ components:
               message:
                 type: string
                 example: Ok
+    created:
+      description: Created
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+                example: created
     noContent:
       description: No Content
     error:
