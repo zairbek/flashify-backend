@@ -7,32 +7,37 @@ get:
   parameters:
     - $ref: '../../index.yaml#/components/parameters/clientId'
     - $ref: '../../index.yaml#/components/parameters/clientSecret'
+    - name: search
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: limit
+      in: query
+      nullable: true
+      schema:
+        type: string
 
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            name:
-              type: string
-              required: true
-            slug:
-              type: string
-              nullable: true
-            description:
-              type: string
-              nullable: true
-            parentCategory:
-              type: string
-              nullable: true
-            active:
-              type: boolean
-              nullable: true
-            icon:
-              type: string
-              nullable: true
+    - name: offset
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: sortField
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: sortDirection
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: parentUuid
+      in: query
+      nullable: true
+      schema:
+        type: string
 
   responses:
     200:
@@ -51,12 +56,15 @@ get:
                     slug:
                       type: string
                     description:
+                      nullable: true
                       type: string
                     parentCategory:
+                      nullable: true
                       type: string
-                    active:
+                    isActive:
                       type: boolean
                     icon:
+                      nullable: true
                       type: string
               meta:
                 type: object

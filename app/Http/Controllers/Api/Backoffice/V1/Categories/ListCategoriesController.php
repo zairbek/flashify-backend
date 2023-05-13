@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Backoffice\V1\Categories;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Backoffice\Categories\GetCategoryRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use MarketPlace\Backoffice\Category\Application\Dto\GetCategoryDto;
 use MarketPlace\Backoffice\Category\Application\Service\CategoryService;
+use MarketPlace\Backoffice\Category\Domain\Entity\Category;
 
 class ListCategoriesController extends Controller
 {
@@ -18,10 +20,20 @@ class ListCategoriesController extends Controller
         $this->service = $service;
     }
 
-    public function __invoke(Request $request): JsonResponse
+    public function __invoke(GetCategoryRequest $request): JsonResponse
     {
-        dd($this->service);
+        $categories = $this->service->getCategories(new GetCategoryDto(
+            search: $request->get('name'),
+            limit: $request->get('limit'),
+            offset: $request->get('offset'),
+            sortField: $request->get('sortField'),
+            sortDirection: $request->get('sortDirection'),
+            parentUuid: $request->get('parentUuid')
+        ));
 
-        return response()->json([]);
+        return response()->json([
+            'data' => $categories->map(fn (Category $category) => $category->toArray()),
+            'meta' => $categories->getMetaData()
+        ]);
     }
 }

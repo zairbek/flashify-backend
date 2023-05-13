@@ -30,4 +30,9 @@ class ActiveStatus
     {
         return $this->status;
     }
+
+    public function isActive(): bool
+    {
+        return $this->status;
+    }
 }

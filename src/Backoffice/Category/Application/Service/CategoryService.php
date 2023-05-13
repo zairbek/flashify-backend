@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MarketPlace\Backoffice\Category\Application\Service;
 
 use MarketPlace\Backoffice\Category\Application\Dto\CreateCategoryDto;
+use MarketPlace\Backoffice\Category\Application\Dto\GetCategoryDto;
 use MarketPlace\Backoffice\Category\Domain\Entity\Category;
 use MarketPlace\Backoffice\Category\Domain\Repository\CategoryRepositoryInterface;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundException;
@@ -12,6 +13,7 @@ use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategorySlugAlready
 use MarketPlace\Common\Domain\ValueObject\CategoryAttribute;
 use MarketPlace\Common\Domain\ValueObject\Icon;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Common\Infrastructure\Service\Collection;
 
 class CategoryService
 {
@@ -48,5 +50,14 @@ class CategoryService
         }
 
         $this->repository->create($category);
+    }
+
+    /**
+     * @param GetCategoryDto $dto
+     * @return Collection<Category>
+     */
+    public function getCategories(GetCategoryDto $dto): Collection
+    {
+        return $this->repository->get($dto);
     }
 }

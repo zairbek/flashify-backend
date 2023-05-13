@@ -8,6 +8,7 @@
         "php": "^8.2",
         "giggsey/libphonenumber-for-php": "^8.13",
         "guzzlehttp/guzzle": "^7.2",
+        "illuminate/collections": "*",
         "laravel/framework": "^10.0",
         "laravel/passport": "^11.8",
         "laravel/sanctum": "^3.2",

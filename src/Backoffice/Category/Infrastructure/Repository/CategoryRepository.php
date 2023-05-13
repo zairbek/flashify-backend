@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace MarketPlace\Backoffice\Category\Infrastructure\Repository;
 
 use App\Models\Category as CategoryModel;
+use MarketPlace\Backoffice\Category\Application\Dto\GetCategoryDto;
 use MarketPlace\Backoffice\Category\Domain\Entity\Category;
 use MarketPlace\Backoffice\Category\Domain\Repository\CategoryRepositoryInterface;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundException;
@@ -14,6 +15,7 @@ use MarketPlace\Common\Domain\ValueObject\CategoryAttribute;
 use MarketPlace\Common\Domain\ValueObject\Icon;
 use MarketPlace\Common\Domain\ValueObject\Slug;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Common\Infrastructure\Service\Collection;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
 
 class CategoryRepository implements CategoryRepositoryInterface
@@ -79,6 +81,36 @@ class CategoryRepository implements CategoryRepositoryInterface
     private function existsSlug(Slug $slug): bool
     {
         return CategoryModel::query()->where('slug', $slug->getSlug())->exists();
+    }
+
+    public function get(GetCategoryDto $dto): Collection
+    {
+        $query = CategoryModel::query();
+
+        if ($dto->parentUuid) {
+            $query->where('parent_uuid', $dto->parentUuid);
+        } else {
+            $query->whereNull('parent_uuid');
+        }
+
+        $count = $query->count();
+
+        if ($dto->search) {
+            $query->where('name', 'like', "%$dto->search%");
+        }
+
+        $query->orderBy($dto->sortField, $dto->sortDirection);
+
+        $query->offset($dto->offset ?? 0);
+        $query->limit($dto->limit ?? 10);
+
+        return (new Collection($query->get()))->map(function (CategoryModel $category) {
+            return $this->categoryHydrator($category);
+        })
+            ->setTotal($count)
+            ->setLimit($dto->limit)
+            ->setOffset($dto->offset)
+        ;
     }
 
     private function categoryHydrator(CategoryModel $categoryModel): Category

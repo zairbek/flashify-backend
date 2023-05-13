@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace MarketPlace\Backoffice\Category\Domain\Entity;
 
+use MarketPlace\Common\Domain\Entity\AggregateRoot;
+use MarketPlace\Common\Domain\Entity\EventTrait;
 use MarketPlace\Common\Domain\ValueObject\ActiveStatus;
 use MarketPlace\Common\Domain\ValueObject\CategoryAttribute;
 use MarketPlace\Common\Domain\ValueObject\Icon;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 
-class Category
+class Category implements AggregateRoot
 {
+    use EventTrait;
+
     private Uuid $uuid;
     private CategoryAttribute $attribute;
     private ActiveStatus $active;
@@ -69,5 +73,17 @@ class Category
     public function getActive(): ActiveStatus
     {
         return $this->active;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'uuid' => $this->getUuid()->getId(),
+            'name' => $this->getAttribute()->getName(),
+            'slug' => $this->getAttribute()->getSlug(),
+            'description' => $this->getAttribute()->getDescription(),
+            'icon' => $this->getIcon()?->getIcon(),
+            'isActive' => $this->getActive()->isActive(),
+        ];
     }
 }

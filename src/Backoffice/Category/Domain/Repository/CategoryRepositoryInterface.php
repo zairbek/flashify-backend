@@ -2,10 +2,12 @@
 
 namespace MarketPlace\Backoffice\Category\Domain\Repository;
 
+use MarketPlace\Backoffice\Category\Application\Dto\GetCategoryDto;
 use MarketPlace\Backoffice\Category\Domain\Entity\Category;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundException;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategorySlugAlreadyExistsException;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Common\Infrastructure\Service\Collection;
 
 interface CategoryRepositoryInterface
 {
@@ -23,4 +25,6 @@ interface CategoryRepositoryInterface
      * @throws CategoryNotFoundException
      */
     public function find(Uuid $uuid): Category;
+
+    public function get(GetCategoryDto $dto): Collection;
 }
