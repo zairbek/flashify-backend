@@ -37,7 +37,7 @@ paths:
 
   # Categories
   /categories:
-    $ref: './paths/categories/createCategory.yaml'
+    $ref: './paths/categories/category.yaml'
   # END Categories
 
 components:
