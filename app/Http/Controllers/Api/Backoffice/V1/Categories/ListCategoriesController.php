@@ -22,10 +22,13 @@ class ListCategoriesController extends Controller
 
     public function __invoke(GetCategoryRequest $request): JsonResponse
     {
+        $limit = $request->get('limit');
+        $offset = $request->get('offset');
+
         $categories = $this->service->getCategories(new GetCategoryDto(
             search: $request->get('name'),
-            limit: $request->get('limit'),
-            offset: $request->get('offset'),
+            limit: $limit ? (int) $limit : null,
+            offset: $offset ? (int) $offset : null,
             sortField: $request->get('sortField'),
             sortDirection: $request->get('sortDirection'),
             parentUuid: $request->get('parentUuid')

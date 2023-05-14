@@ -12,6 +12,7 @@ class Collection extends LaraCollection
         'total' => 0,
         'offset' => 0,
         'limit' => 0,
+        'additional' => null
     ];
 
     public function setTotal(int $total): self
@@ -29,6 +30,12 @@ class Collection extends LaraCollection
     public function setLimit(int $limit): self
     {
         $this->metaData['limit'] = $limit;
+        return $this;
+    }
+
+    public function setAdditional(?array $additional): self
+    {
+        $this->metaData['additional'] = $additional;
         return $this;
     }
 

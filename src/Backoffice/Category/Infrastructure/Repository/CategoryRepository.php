@@ -85,7 +85,7 @@ class CategoryRepository implements CategoryRepositoryInterface
 
     public function get(GetCategoryDto $dto): Collection
     {
-        $query = CategoryModel::query();
+        $query = CategoryModel::query()->with('parent');
 
         if ($dto->parentUuid) {
             $query->where('parent_uuid', $dto->parentUuid);
@@ -100,16 +100,21 @@ class CategoryRepository implements CategoryRepositoryInterface
         }
 
         $query->orderBy($dto->sortField, $dto->sortDirection);
-
         $query->offset($dto->offset ?? 0);
         $query->limit($dto->limit ?? 10);
 
-        return (new Collection($query->get()))->map(function (CategoryModel $category) {
+        $result = $query->get();
+
+        return (new Collection($result))->map(function (CategoryModel $category) {
             return $this->categoryHydrator($category);
         })
             ->setTotal($count)
             ->setLimit($dto->limit)
             ->setOffset($dto->offset)
+            ->setAdditional([
+                'parent' => $result->first()?->parent?->parent?->uuid,
+                'current' => $dto->parentUuid
+            ])
         ;
     }
 

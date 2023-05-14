@@ -71,6 +71,22 @@ get:
                 properties:
                   total:
                     type: integer
+                  offset:
+                    type: integer
+                  limit:
+                    type: integer
+                  parent:
+                    type: string
+                  additional:
+                    type: object
+                    nullable: true
+                    properties:
+                      parent:
+                        type: string
+                        nullable: true
+                      current:
+                        type: string
+                        nullable: true
 
 
     400:
