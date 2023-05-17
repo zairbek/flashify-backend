@@ -60,4 +60,12 @@ class CategoryService
     {
         return $this->repository->get($dto);
     }
+
+    /**
+     * @throws CategoryNotFoundException
+     */
+    public function showCategory(string $uuid): Category
+    {
+        return $this->repository->find(new Uuid($uuid));
+    }
 }
