@@ -27,4 +27,9 @@ interface CategoryRepositoryInterface
     public function find(Uuid $uuid): Category;
 
     public function get(GetCategoryDto $dto): Collection;
+
+    /**
+     * @throws CategorySlugAlreadyExistsException
+     */
+    public function update(Category $category): void;
 }

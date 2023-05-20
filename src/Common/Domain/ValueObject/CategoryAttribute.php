@@ -13,7 +13,7 @@ class CategoryAttribute
     public function __construct(string $name, ?string $slug = null, ?string $description = null)
     {
         $this->name = $name;
-        $this->slug = $slug ?: \Str::slug($name);
+        $this->slug = \Str::slug($slug) ?: \Str::slug($name);
         $this->description = $description;
     }
 

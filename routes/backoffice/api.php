@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Backoffice\V1\Auth\SignOutController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\CreateCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\ListCategoriesController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\ShowCategoryController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\UpdateCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\DocumentationController;
 use App\Http\Controllers\Api\Backoffice\V1\Me\GetMeController;
 use Illuminate\Support\Facades\Response;
@@ -45,6 +46,7 @@ Route::middleware(['auth:api-backoffice'])->group(function () {
         Route::get('', ListCategoriesController::class);
         Route::post('', CreateCategoryController::class);
         Route::get('{uuid}', ShowCategoryController::class);
+        Route::put('{uuid}', UpdateCategoryController::class);
     });
 
 });

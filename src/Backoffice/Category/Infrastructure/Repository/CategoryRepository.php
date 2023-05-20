@@ -49,6 +49,27 @@ class CategoryRepository implements CategoryRepositoryInterface
     }
 
     /**
+     * @throws CategorySlugAlreadyExistsException
+     */
+    public function update(Category $category): void
+    {
+        if ($this->existsSlugWithout(new Slug($category->getAttribute()->getSlug()), new Uuid($category->getUuid()->getId()))) {
+            throw new CategorySlugAlreadyExistsException();
+        }
+
+        /** @var CategoryModel $categoryModel */
+        $categoryModel = CategoryModel::where('uuid', $category->getUuid()->getId())->first();
+        $categoryModel->update([
+            'name' => $category->getAttribute()->getName(),
+            'slug' => $category->getAttribute()->getSlug(),
+            'description' => $category->getAttribute()->getDescription(),
+            'parent_uuid' => $category->getParentCategory()?->getUuid()->getId(),
+            'active' => $category->getActive()->isStatus(),
+            'icon' => $category->getIcon()?->getIcon()
+        ]);
+    }
+
+    /**
      * @throws CategoryNotFoundException
      */
     public function find(Uuid $uuid): Category
@@ -81,6 +102,14 @@ class CategoryRepository implements CategoryRepositoryInterface
     private function existsSlug(Slug $slug): bool
     {
         return CategoryModel::query()->where('slug', $slug->getSlug())->exists();
+    }
+
+    private function existsSlugWithout(Slug $slug, Uuid $uuid): bool
+    {
+        return CategoryModel::query()
+            ->whereNot('uuid', $uuid->getId())
+            ->where('slug', $slug->getSlug())
+            ->exists();
     }
 
     public function get(GetCategoryDto $dto): Collection
@@ -129,6 +158,9 @@ class CategoryRepository implements CategoryRepositoryInterface
             ),
             'active' => new ActiveStatus($categoryModel->active),
             'icon' => $categoryModel->icon ? new Icon($categoryModel->icon) : null,
+            'parentCategory' => $categoryModel->parent
+                ? $this->categoryHydrator($categoryModel->parent)
+                : null
         ]);
     }
 }

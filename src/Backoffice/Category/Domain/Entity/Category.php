@@ -31,6 +31,11 @@ class Category implements AggregateRoot
         $this->active = ActiveStatus::active();
     }
 
+    public function changeAttributes(CategoryAttribute $attribute): void
+    {
+        $this->attribute = $attribute;
+    }
+
     public function changeIcon(?Icon $icon): void
     {
         $this->icon = $icon;
@@ -84,6 +89,7 @@ class Category implements AggregateRoot
             'description' => $this->getAttribute()->getDescription(),
             'icon' => $this->getIcon()?->getIcon(),
             'isActive' => $this->getActive()->isActive(),
+            'parentCategory' => $this->getParentCategory()?->toArray(),
         ];
     }
 }

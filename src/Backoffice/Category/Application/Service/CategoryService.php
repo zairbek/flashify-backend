@@ -6,6 +6,7 @@ namespace MarketPlace\Backoffice\Category\Application\Service;
 
 use MarketPlace\Backoffice\Category\Application\Dto\CreateCategoryDto;
 use MarketPlace\Backoffice\Category\Application\Dto\GetCategoryDto;
+use MarketPlace\Backoffice\Category\Application\Dto\UpdateCategoryDto;
 use MarketPlace\Backoffice\Category\Domain\Entity\Category;
 use MarketPlace\Backoffice\Category\Domain\Repository\CategoryRepositoryInterface;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundException;
@@ -67,5 +68,32 @@ class CategoryService
     public function showCategory(string $uuid): Category
     {
         return $this->repository->find(new Uuid($uuid));
+    }
+
+    /**
+     * @throws CategoryNotFoundException
+     * @throws CategorySlugAlreadyExistsException
+     */
+    public function updateCategory(UpdateCategoryDto $dto): void
+    {
+        $category = $this->repository->find(new Uuid($dto->uuid));
+
+        $category->changeAttributes(new CategoryAttribute(
+            name: $dto->name, slug: $dto->slug, description: $dto->description
+        ));
+        if ($dto->icon) {
+            $category->changeIcon(new Icon($dto->icon));
+        }
+        if ($dto->parentCategory) {
+            $parentCategory = $this->repository->find(new Uuid($dto->parentCategory));
+            $category->changeParentCategory($parentCategory);
+        }
+        if ($dto->active) {
+            $category->activate();
+        } else {
+            $category->deactivate();
+        }
+
+        $this->repository->update($category);
     }
 }
