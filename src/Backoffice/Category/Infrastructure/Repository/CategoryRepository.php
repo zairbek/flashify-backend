@@ -69,6 +69,11 @@ class CategoryRepository implements CategoryRepositoryInterface
         ]);
     }
 
+    public function delete(Category $category): void
+    {
+        CategoryModel::where('uuid', $category->getUuid()->getId())->delete();
+    }
+
     /**
      * @throws CategoryNotFoundException
      */

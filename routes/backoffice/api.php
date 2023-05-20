@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Backoffice\V1\Auth\SignInController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignOutController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\CreateCategoryController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\DeleteCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\ListCategoriesController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\ShowCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\UpdateCategoryController;
@@ -47,6 +48,7 @@ Route::middleware(['auth:api-backoffice'])->group(function () {
         Route::post('', CreateCategoryController::class);
         Route::get('{uuid}', ShowCategoryController::class);
         Route::put('{uuid}', UpdateCategoryController::class);
+        Route::delete('{uuid}', DeleteCategoryController::class);
     });
 
 });

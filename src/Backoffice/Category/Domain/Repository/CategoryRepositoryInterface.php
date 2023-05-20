@@ -32,4 +32,6 @@ interface CategoryRepositoryInterface
      * @throws CategorySlugAlreadyExistsException
      */
     public function update(Category $category): void;
+
+    public function delete(Category $category): void;
 }

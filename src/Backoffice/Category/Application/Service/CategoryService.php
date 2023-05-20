@@ -96,4 +96,14 @@ class CategoryService
 
         $this->repository->update($category);
     }
+
+    /**
+     * @throws CategoryNotFoundException
+     */
+    public function deleteCategory(Uuid $uuid): void
+    {
+        $category = $this->repository->find($uuid);
+
+        $this->repository->delete($category);
+    }
 }
