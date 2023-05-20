@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Backoffice\V1\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Backoffice\Auth\SignInRequest;
+use Carbon\Carbon;
 use DB;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -20,6 +21,7 @@ use MarketPlace\Backoffice\Auth\Infrastructure\Exception\NotGivenClientIdAndSecr
 use MarketPlace\Backoffice\Auth\Infrastructure\Exception\UserCredentialsIncorrectException;
 use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
+use Symfony\Component\HttpFoundation\Cookie;
 use Throwable;
 
 class SignInController extends Controller
@@ -44,7 +46,19 @@ class SignInController extends Controller
                 password: $request->get('password')
             ));
             DB::commit();
-            return response()->json($token->toArray());
+            return response()->json($token->toArray())
+                ->cookie(new Cookie(
+                    name: 'accessToken',
+                    value: $token->getAccessToken(),
+                    expire: now()->addSeconds($token->getAccessTokenLifeTime()),
+                    path: '/',
+                ))
+                ->cookie(new Cookie(
+                    name: 'refreshToken',
+                    value: $token->getRefreshToken(),
+                    path: '/',
+                ))
+                ;
         } catch (UserCredentialsIncorrectException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['email' => ['Неверный логин или пароль']]);
