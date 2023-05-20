@@ -1,0 +1,70 @@
+get:
+  summary: Получение список иконок
+  tags:
+    - Digest/Icons
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../../index.yaml#/components/parameters/clientSecret'
+    - name: search
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: limit
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: offset
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: sortField
+      in: query
+      nullable: true
+      schema:
+        type: string
+    - name: sortDirection
+      in: query
+      nullable: true
+      schema:
+        type: string
+
+  responses:
+    200:
+      description: Список категории
+      content:
+        application/json:
+          schema:
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    file:
+                      type: string
+              meta:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  offset:
+                    type: integer
+                  limit:
+                    type: integer
+                  additional:
+                    type: object
+                    nullable: true
+
+
+    400:
+      $ref: '../../../index.yaml#/components/responses/error'
+    401:
+      $ref: '../../../index.yaml#/components/responses/unauthenticated'
+

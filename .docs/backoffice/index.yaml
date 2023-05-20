@@ -14,6 +14,7 @@ tags:
   - name: Auth
   - name: Me
   - name: Categories
+  - name: Digest/Icons
 
 paths:
   # HEALTH CHECK
@@ -39,6 +40,13 @@ paths:
   /categories:
     $ref: './paths/categories/category.yaml'
   # END Categories
+
+  # Digest
+  ## Icons
+  /digest/icons:
+    $ref: './paths/digest/icons/icon.yaml'
+  ## END Icons
+  # END Digest
 
 components:
   securitySchemes:
