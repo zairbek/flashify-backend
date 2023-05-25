@@ -97,7 +97,7 @@ class IconRepository implements IconRepositoryInterface
         return $this->hydrator->hydrate(Icon::class, [
             'uuid' => new Uuid($iconModel->uuid),
             'name' => new IconName($iconModel->name),
-            'file' => new IconFile($iconModel->file),
+            'file' => $iconModel->toIconFile()
         ]);
     }
 }
