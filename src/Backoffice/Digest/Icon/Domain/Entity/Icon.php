@@ -18,6 +18,17 @@ class Icon implements AggregateRoot
     private IconName $name;
     private IconFile $file;
 
+    public function __construct(
+        Uuid $uuid,
+        IconName $name,
+        IconFile $file,
+    )
+    {
+        $this->uuid = $uuid;
+        $this->name = $name;
+        $this->file = $file;
+    }
+
     /**
      * @return Uuid
      */
@@ -47,7 +58,7 @@ class Icon implements AggregateRoot
         return [
             'uuid' => $this->getUuid()->getId(),
             'name' => $this->getName()->getName(),
-            'file' => $this->getFile()->getFile(),
+            'file' => $this->getFile()->getFilePath(),
         ];
     }
 }

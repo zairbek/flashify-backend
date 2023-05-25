@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\UploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
@@ -16,6 +17,8 @@ class Icon extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
+    public const MEDIA_COLLECTION = 'file';
+
     protected $primaryKey = 'uuid';
     public $incrementing = false;
     protected $keyType = 'string';
@@ -27,7 +30,7 @@ class Icon extends Model implements HasMedia
 
     public function registerMediaCollections(): void
     {
-        $this->addMediaCollection('file')
+        $this->addMediaCollection(self::MEDIA_COLLECTION)
             ->acceptsMimeTypes(['image/svg+xml'])
             ->singleFile();
     }
@@ -36,7 +39,12 @@ class Icon extends Model implements HasMedia
     {
         $this->load('media');
         return Attribute::make(
-            get: fn () => $this->getFirstMediaUrl('file')
+            get: fn () => $this->getFirstMediaUrl(self::MEDIA_COLLECTION)
         );
+    }
+
+    public function addIcon(UploadedFile $file): void
+    {
+        $this->addMedia($file)->toMediaCollection(self::MEDIA_COLLECTION);
     }
 }

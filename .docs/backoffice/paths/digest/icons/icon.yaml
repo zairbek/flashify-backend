@@ -68,3 +68,36 @@ get:
     401:
       $ref: '../../../index.yaml#/components/responses/unauthenticated'
 
+
+post:
+  summary: Создание иконки
+  tags:
+    - Digest/Icons
+  security:
+    - bearerAuth: []
+  parameters:
+    - $ref: '../../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../../index.yaml#/components/parameters/clientSecret'
+
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+              required: true
+            file:
+              type: string
+              required: true
+              format: binary
+
+  responses:
+    201:
+      $ref: '../../../index.yaml#/components/responses/created'
+    400:
+      $ref: '../../../index.yaml#/components/responses/error'
+    401:
+      $ref: '../../../index.yaml#/components/responses/unauthenticated'
