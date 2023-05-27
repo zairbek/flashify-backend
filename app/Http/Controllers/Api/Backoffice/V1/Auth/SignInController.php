@@ -52,6 +52,7 @@ class SignInController extends Controller
                     value: $token->getAccessToken(),
                     expire: now()->addSeconds($token->getAccessTokenLifeTime()),
                     path: '/',
+                    httpOnly: false
                 ))
                 ->cookie(new Cookie(
                     name: 'refreshToken',
