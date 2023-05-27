@@ -29,6 +29,16 @@ class Icon implements AggregateRoot
         $this->file = $file;
     }
 
+    public function changeName(IconName $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function changeFile(IconFile $file): void
+    {
+        $this->file = $file;
+    }
+
     /**
      * @return Uuid
      */

@@ -28,4 +28,12 @@ interface IconRepositoryInterface
      * @throws IconNotFoundException
      */
     public function find(Uuid $uuid): Icon;
+
+    /**
+     * @param Icon $icon
+     * @return void
+     * @throws IconAlreadyExistsException
+     * @throws IconNotFoundException
+     */
+    public function update(Icon $icon): void;
 }

@@ -59,6 +59,7 @@ class Icon extends Model implements HasMedia
             mimeType: $file->mime_type,
             dirPath: $file->getPath(),
             filePath: $file->getUrl(),
+            isUploaded: true
         );
     }
 }

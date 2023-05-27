@@ -6,6 +6,7 @@ namespace MarketPlace\Backoffice\Digest\Icon\Application\Service;
 
 use MarketPlace\Backoffice\Digest\Icon\Application\Dto\CreateIconDto;
 use MarketPlace\Backoffice\Digest\Icon\Application\Dto\GetIconDto;
+use MarketPlace\Backoffice\Digest\Icon\Application\Dto\UpdateIconDto;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Entity\Icon;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Repository\IconRepositoryInterface;
 use MarketPlace\Backoffice\Digest\Icon\Domain\ValueObject\IconName;
@@ -54,5 +55,32 @@ class IconService implements AggregateRoot
         $category = $this->repository->find($uuid);
 
         $this->repository->delete($category);
+    }
+
+    /**
+     * @throws IconNotFoundException
+     */
+    public function showIcon(string $uuid): Icon
+    {
+        return $this->repository->find(new Uuid($uuid));
+    }
+
+    /**
+     * @throws IconNotFoundException
+     * @throws IconAlreadyExistsException
+     */
+    public function updateIcon(UpdateIconDto $dto): void
+    {
+        $icon = $this->repository->find(new Uuid($dto->uuid));
+
+        if ($dto->name) {
+            $icon->changeName(new IconName($dto->name));
+        }
+
+        if ($dto->file) {
+            $icon->changeFile($dto->file);
+        }
+
+        $this->repository->update($icon);
     }
 }

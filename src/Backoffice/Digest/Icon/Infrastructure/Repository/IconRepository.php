@@ -9,7 +9,6 @@ use Illuminate\Http\UploadedFile;
 use MarketPlace\Backoffice\Digest\Icon\Application\Dto\GetIconDto;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Entity\Icon;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Repository\IconRepositoryInterface;
-use MarketPlace\Backoffice\Digest\Icon\Domain\ValueObject\IconFile;
 use MarketPlace\Backoffice\Digest\Icon\Domain\ValueObject\IconName;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconAlreadyExistsException;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconNotFoundException;
@@ -46,6 +45,36 @@ class IconRepository implements IconRepositoryInterface
             originalName: $icon->getFile()->getOriginalName(),
             mimeType: $icon->getFile()->getMimeType()
         ));
+    }
+
+    /**
+     * @throws IconAlreadyExistsException
+     * @throws IconNotFoundException
+     */
+    public function update(Icon $icon): void
+    {
+        if ($this->existsByNameWithout($icon->getName(), $icon->getUuid())) {
+            throw new IconAlreadyExistsException();
+        }
+
+        /** @var IconModel $iconModel */
+        $iconModel = IconModel::query()->where('uuid', $icon->getUuid()->getId())->first();
+
+        if (is_null($iconModel)) {
+            throw new IconNotFoundException();
+        }
+
+        $iconModel->update([
+            'name' => $icon->getName()->getName()
+        ]);
+
+        if (! $icon->getFile()->isUploaded()) {
+             $iconModel->addIcon(new UploadedFile(
+                 path: $icon->getFile()->getFilePath(),
+                 originalName: $icon->getFile()->getOriginalName(),
+                 mimeType: $icon->getFile()->getMimeType()
+             ));
+        }
     }
 
     public function delete(Icon $icon): void
@@ -95,6 +124,12 @@ class IconRepository implements IconRepositoryInterface
     private function existsByName(IconName $name): bool
     {
         return IconModel::query()->where('name', $name->getName())->exists();
+    }
+
+    private function existsByNameWithout(IconName $name, Uuid $uuid): bool
+    {
+        return IconModel::query()->whereNot('uuid', $uuid->getId())
+            ->where('name', $name->getName())->exists();
     }
 
     /**

@@ -13,6 +13,7 @@ class File
     private string $mimeType;
     private string $dirPath;
     private string $filePath;
+    private bool $isUploaded;
 
     public function __construct(
         string $originalName,
@@ -20,6 +21,7 @@ class File
         string $mimeType,
         string $dirPath,
         string $filePath,
+        bool $isUploaded = false,
     )
     {
         $this->originalName = $originalName;
@@ -27,6 +29,7 @@ class File
         $this->mimeType = $mimeType;
         $this->dirPath = $dirPath;
         $this->filePath = $filePath;
+        $this->isUploaded = $isUploaded;
     }
 
     public static function fromUploadedFile(UploadedFile $file): static
@@ -78,5 +81,10 @@ class File
     public function getFilePath(): string
     {
         return $this->filePath;
+    }
+
+    public function isUploaded(): bool
+    {
+        return $this->isUploaded;
     }
 }
