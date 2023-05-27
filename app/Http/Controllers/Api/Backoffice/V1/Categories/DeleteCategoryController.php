@@ -29,7 +29,7 @@ class DeleteCategoryController extends Controller
         } catch (CategoryNotFoundException $e) {
             return response()->json(['message' => 'not found'], 404);
         } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 404);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
 }
