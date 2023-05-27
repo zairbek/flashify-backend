@@ -10,6 +10,7 @@ use MarketPlace\Backoffice\Digest\Icon\Domain\Entity\Icon;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Repository\IconRepositoryInterface;
 use MarketPlace\Backoffice\Digest\Icon\Domain\ValueObject\IconName;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconAlreadyExistsException;
+use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconNotFoundException;
 use MarketPlace\Common\Domain\Entity\AggregateRoot;
 use MarketPlace\Common\Domain\Entity\EventTrait;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
@@ -43,5 +44,15 @@ class IconService implements AggregateRoot
         );
 
         $this->repository->create($icon);
+    }
+
+    /**
+     * @throws IconNotFoundException
+     */
+    public function deleteIcon(Uuid $uuid): void
+    {
+        $category = $this->repository->find($uuid);
+
+        $this->repository->delete($category);
     }
 }

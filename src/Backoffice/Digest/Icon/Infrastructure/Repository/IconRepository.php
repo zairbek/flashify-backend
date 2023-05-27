@@ -48,6 +48,26 @@ class IconRepository implements IconRepositoryInterface
         ));
     }
 
+    public function delete(Icon $icon): void
+    {
+        IconModel::where('uuid', $icon->getUuid()->getId())->first()->delete();
+    }
+
+    /**
+     * @throws IconNotFoundException
+     */
+    public function find(Uuid $uuid): Icon
+    {
+        /** @var IconModel $iconModel */
+        $iconModel = IconModel::query()->with('media')->where('uuid', $uuid->getId())->first();
+
+        if (is_null($iconModel)) {
+            throw new IconNotFoundException();
+        }
+
+        return $this->iconHydrator($iconModel);
+    }
+
     public function get(GetIconDto $dto): Collection
     {
         $query = IconModel::query()->with('media');

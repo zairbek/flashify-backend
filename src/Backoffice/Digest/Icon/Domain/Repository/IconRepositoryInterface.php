@@ -5,6 +5,8 @@ namespace MarketPlace\Backoffice\Digest\Icon\Domain\Repository;
 use MarketPlace\Backoffice\Digest\Icon\Application\Dto\GetIconDto;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Entity\Icon;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconAlreadyExistsException;
+use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconNotFoundException;
+use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Collection;
 
 interface IconRepositoryInterface
@@ -17,4 +19,13 @@ interface IconRepositoryInterface
      * @throws IconAlreadyExistsException
      */
     public function create(Icon $icon): void;
+
+    public function delete(Icon $icon): void;
+
+    /**
+     * @param Uuid $uuid
+     * @return Icon
+     * @throws IconNotFoundException
+     */
+    public function find(Uuid $uuid): Icon;
 }

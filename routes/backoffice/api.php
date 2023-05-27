@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Backoffice\V1\Categories\ListCategoriesController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\ShowCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\Categories\UpdateCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\CreateIconController;
+use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\DeleteIconController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\ListIconsController;
 use App\Http\Controllers\Api\Backoffice\V1\DocumentationController;
 use App\Http\Controllers\Api\Backoffice\V1\Me\GetMeController;
@@ -57,6 +58,9 @@ Route::middleware(['auth:api-backoffice'])->group(function () {
         Route::prefix('icons')->group(function () {
             Route::get('', ListIconsController::class);
             Route::post('', CreateIconController::class);
+//            Route::get('{uuid}', DeleteIconController::class);
+//            Route::put('{uuid}', DeleteIconController::class);
+            Route::delete('{uuid}', DeleteIconController::class);
         });
     });
 
