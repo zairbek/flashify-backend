@@ -10,6 +10,7 @@ use MarketPlace\Backoffice\Digest\Icon\Application\Dto\UpdateIconDto;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Entity\Icon;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Repository\IconRepositoryInterface;
 use MarketPlace\Backoffice\Digest\Icon\Domain\ValueObject\IconName;
+use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Criteria\ByUuidCriteria;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconAlreadyExistsException;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconNotFoundException;
 use MarketPlace\Common\Domain\Entity\AggregateRoot;
@@ -82,5 +83,18 @@ class IconService implements AggregateRoot
         }
 
         $this->repository->update($icon);
+    }
+
+    public function getByUuids(array $uuids): array
+    {
+        $icons = $this->repository->filter(new ByUuidCriteria($uuids));
+
+        return $icons->map(function (Icon $icon) {
+            return [
+                'uuid' => $icon->getUuid()->getId(),
+                'name' => $icon->getName()->getName(),
+                'file' => $icon->getFile()->getFilePath()
+            ];
+        })->toArray();
     }
 }

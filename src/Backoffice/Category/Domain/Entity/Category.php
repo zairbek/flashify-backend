@@ -8,7 +8,6 @@ use MarketPlace\Common\Domain\Entity\AggregateRoot;
 use MarketPlace\Common\Domain\Entity\EventTrait;
 use MarketPlace\Common\Domain\ValueObject\ActiveStatus;
 use MarketPlace\Common\Domain\ValueObject\CategoryAttribute;
-use MarketPlace\Common\Domain\ValueObject\Icon;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 
 class Category implements AggregateRoot
@@ -18,7 +17,7 @@ class Category implements AggregateRoot
     private Uuid $uuid;
     private CategoryAttribute $attribute;
     private ActiveStatus $active;
-    private ?Icon $icon = null;
+    private ?Uuid $iconUuid = null;
     private ?self $parentCategory = null;
 
     public function __construct(
@@ -36,9 +35,14 @@ class Category implements AggregateRoot
         $this->attribute = $attribute;
     }
 
-    public function changeIcon(?Icon $icon): void
+    public function changeIcon(Uuid $icon): void
     {
-        $this->icon = $icon;
+        $this->iconUuid = $icon;
+    }
+
+    public function removeIcon(): void
+    {
+        $this->iconUuid = null;
     }
 
     public function changeParentCategory(?self $parentCategory): void
@@ -60,9 +64,9 @@ class Category implements AggregateRoot
         return $this->parentCategory;
     }
 
-    public function getIcon(): ?Icon
+    public function getIconUuid(): ?Uuid
     {
-        return $this->icon;
+        return $this->iconUuid;
     }
 
     public function getUuid(): Uuid
@@ -87,7 +91,7 @@ class Category implements AggregateRoot
             'name' => $this->getAttribute()->getName(),
             'slug' => $this->getAttribute()->getSlug(),
             'description' => $this->getAttribute()->getDescription(),
-            'icon' => $this->getIcon()?->getIcon(),
+            'icon_uuid' => $this->getIconUuid()?->getId(),
             'isActive' => $this->getActive()->isActive(),
             'parentCategory' => $this->getParentCategory()?->toArray(),
         ];

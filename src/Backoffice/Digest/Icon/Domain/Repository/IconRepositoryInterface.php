@@ -6,6 +6,7 @@ use MarketPlace\Backoffice\Digest\Icon\Application\Dto\GetIconDto;
 use MarketPlace\Backoffice\Digest\Icon\Domain\Entity\Icon;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconAlreadyExistsException;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconNotFoundException;
+use MarketPlace\Common\Domain\Criteria\CriteriaInterface;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Collection;
 
@@ -36,4 +37,6 @@ interface IconRepositoryInterface
      * @throws IconNotFoundException
      */
     public function update(Icon $icon): void;
+
+    public function filter(CriteriaInterface $criteria): Collection;
 }

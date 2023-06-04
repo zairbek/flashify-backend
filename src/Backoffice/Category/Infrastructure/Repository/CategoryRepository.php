@@ -12,7 +12,6 @@ use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundExc
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategorySlugAlreadyExistsException;
 use MarketPlace\Common\Domain\ValueObject\ActiveStatus;
 use MarketPlace\Common\Domain\ValueObject\CategoryAttribute;
-use MarketPlace\Common\Domain\ValueObject\Icon;
 use MarketPlace\Common\Domain\ValueObject\Slug;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Collection;
@@ -44,7 +43,7 @@ class CategoryRepository implements CategoryRepositoryInterface
             'description' => $category->getAttribute()->getDescription(),
             'parent_uuid' => $category->getParentCategory()?->getUuid()->getId(),
             'active' => $category->getActive()->isStatus(),
-            'icon' => $category->getIcon()?->getIcon()
+            'icon_uuid' => $category->getIconUuid()?->getId()
         ]);
     }
 
@@ -65,7 +64,7 @@ class CategoryRepository implements CategoryRepositoryInterface
             'description' => $category->getAttribute()->getDescription(),
             'parent_uuid' => $category->getParentCategory()?->getUuid()->getId(),
             'active' => $category->getActive()->isStatus(),
-            'icon' => $category->getIcon()?->getIcon()
+            'icon_uuid' => $category->getIconUuid()?->getId(),
         ]);
     }
 
@@ -119,7 +118,7 @@ class CategoryRepository implements CategoryRepositoryInterface
 
     public function get(GetCategoryDto $dto): Collection
     {
-        $query = CategoryModel::query()->with('parent');
+        $query = CategoryModel::query()->with(['parent']);
 
         if ($dto->parentUuid) {
             $query->where('parent_uuid', $dto->parentUuid);
@@ -162,7 +161,7 @@ class CategoryRepository implements CategoryRepositoryInterface
                 description: $categoryModel->description,
             ),
             'active' => new ActiveStatus($categoryModel->active),
-            'icon' => $categoryModel->icon ? new Icon($categoryModel->icon) : null,
+            'iconUuid' => $categoryModel->icon_uuid ? new Uuid($categoryModel->icon_uuid) : null,
             'parentCategory' => $categoryModel->parent
                 ? $this->categoryHydrator($categoryModel->parent)
                 : null

@@ -12,6 +12,7 @@ use MarketPlace\Backoffice\Digest\Icon\Domain\Repository\IconRepositoryInterface
 use MarketPlace\Backoffice\Digest\Icon\Domain\ValueObject\IconName;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconAlreadyExistsException;
 use MarketPlace\Backoffice\Digest\Icon\Infrastructure\Exception\IconNotFoundException;
+use MarketPlace\Common\Domain\Criteria\CriteriaInterface;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Collection;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
@@ -145,6 +146,16 @@ class IconRepository implements IconRepositoryInterface
         }
 
         return $this->iconHydrator($iconModel);
+    }
+
+    public function filter(CriteriaInterface $criteria): Collection
+    {
+        $iconModel = IconModel::query()
+            ->whereIn($criteria->getColumn(), $criteria->getValue())
+            ->get()
+        ;
+
+        return (new Collection($iconModel))->map(fn ($icon) => $this->iconHydrator($icon));
     }
 
     private function iconHydrator(IconModel $iconModel): Icon

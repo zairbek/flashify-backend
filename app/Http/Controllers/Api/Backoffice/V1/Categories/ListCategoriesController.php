@@ -35,7 +35,7 @@ class ListCategoriesController extends Controller
         ));
 
         return response()->json([
-            'data' => $categories->map(fn (Category $category) => $category->toArray()),
+            'data' => $categories,
             'meta' => $categories->getMetaData()
         ]);
     }

@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Backoffice\Category\Application\Dto\CreateCategoryDto;
 use MarketPlace\Backoffice\Category\Application\Service\CategoryService;
+use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryIconNotFoundException;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundException;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategorySlugAlreadyExistsException;
 
@@ -44,6 +45,9 @@ class CreateCategoryController extends Controller
         } catch (CategorySlugAlreadyExistsException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['slug' => ['Slug с таким именем уже существует в базе']]);
+        } catch (CategoryIconNotFoundException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['icon' => ['Такой иконки не существует']]);
         } catch (Exception $e) {
             DB::rollBack();
             return response()->json(['error' => $e->getMessage()], 400);

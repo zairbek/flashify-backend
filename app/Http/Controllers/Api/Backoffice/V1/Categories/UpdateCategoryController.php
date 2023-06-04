@@ -10,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Backoffice\Category\Application\Dto\UpdateCategoryDto;
 use MarketPlace\Backoffice\Category\Application\Service\CategoryService;
+use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryIconNotFoundException;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundException;
 use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategorySlugAlreadyExistsException;
 
@@ -32,13 +33,15 @@ class UpdateCategoryController extends Controller
                 description: $request->get('description'),
                 parentCategory: $request->get('parentCategory'),
                 active: $request->get('active'),
-                icon: $request->get('icon'),
+                iconUuid: $request->get('icon_uuid'),
             ));
             return response()->json(['message' => 'ok']);
         } catch (CategoryNotFoundException $e) {
             return response()->json(['message' => 'not found'], 404);
         } catch (CategorySlugAlreadyExistsException $e) {
             throw ValidationException::withMessages(['slug' => ['Slug с таким именем уже существует в базе']]);
+        } catch (CategoryIconNotFoundException $e) {
+            throw ValidationException::withMessages(['icon_uuid' => ['Такой иконки не существует']]);
         }
     }
 }

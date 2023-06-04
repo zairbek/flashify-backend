@@ -13,7 +13,7 @@ class UpdateCategoryDto
         public ?string $description = null,
         public ?string $parentCategory = null,
         public ?bool $active = true,
-        public ?string $icon = null,
+        public ?string $iconUuid = null,
     )
     {
     }
