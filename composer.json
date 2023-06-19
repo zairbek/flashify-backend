@@ -59,7 +59,8 @@
             "@php artisan key:generate --ansi"
         ],
         "swagger-market": "swagger-cli bundle ./.docs/market/index.yaml --outfile storage/documentation/market.yaml --type yaml",
-        "swagger-backoffice": "swagger-cli bundle ./.docs/backoffice/index.yaml --outfile storage/documentation/backoffice.yaml --type yaml"
+        "swagger-backoffice": "swagger-cli bundle ./.docs/backoffice/index.yaml --outfile storage/documentation/backoffice.yaml --type yaml",
+        "swagger-partners": "swagger-cli bundle ./.docs/partners/index.yaml --outfile storage/documentation/partners.yaml --type yaml"
     },
     "extra": {
         "laravel": {

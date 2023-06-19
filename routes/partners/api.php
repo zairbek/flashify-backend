@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\Partners\V1\DocumentationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,8 +14,13 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::prefix('documentation')->group(function () {
+    Route::get('/', [DocumentationController::class, 'ui']);
+    Route::get('/file', [DocumentationController::class, 'file']);
+});
+
+
 Route::get('healthCheck', static function () {
     return Response::json(['message' => 'ok']);
 });
-
 

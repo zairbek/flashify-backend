@@ -1,0 +1,73 @@
+post:
+  summary: Регистрация.
+  tags:
+    - Auth
+  parameters:
+    - $ref: '../../../index.yaml#/components/parameters/clientId'
+    - $ref: '../../../index.yaml#/components/parameters/clientSecret'
+
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            firstName:
+              required: true
+              type: string
+            lastName:
+              required: true
+              type: string
+            phone:
+              required: true
+              type: string
+            code:
+              required: true
+              type: string
+            password:
+              required: true
+              type: string
+            passwordConfirmation:
+              required: true
+              type: string
+  responses:
+    '200':
+      $ref: '../../../index.yaml#/components/responses/tokens'
+    '422':
+      description:
+      content:
+        application/json:
+          schema:
+            properties:
+              message:
+                type: string
+              errors:
+                type: object
+                properties:
+                  firstName:
+                    type: array
+                    items:
+                      type: string
+                  lastName:
+                    type: array
+                    items:
+                      type: string
+                  phone:
+                    type: array
+                    items:
+                      type: string
+                  code:
+                    type: array
+                    items:
+                      type: string
+                  password:
+                    type: array
+                    items:
+                      type: string
+                  passwordConfirmation:
+                    type: array
+                    items:
+                      type: string
+    '400':
+      $ref: '../../../index.yaml#/components/responses/error'
