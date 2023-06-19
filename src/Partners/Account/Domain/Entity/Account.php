@@ -10,10 +10,9 @@ use MarketPlace\Common\Domain\ValueObject\Email;
 use MarketPlace\Common\Domain\ValueObject\Login;
 use MarketPlace\Common\Domain\ValueObject\Password;
 use MarketPlace\Common\Domain\ValueObject\Phone;
-use MarketPlace\Common\Domain\ValueObject\Sex;
-use MarketPlace\Common\Domain\ValueObject\UserStatus;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Partners\Account\Domain\ValueObject\AccountName;
+use MarketPlace\Partners\Account\Domain\ValueObject\AccountStatus;
 
 class Account implements AggregateRoot
 {
@@ -24,9 +23,8 @@ class Account implements AggregateRoot
     private ?Email $email;
     private ?Phone $phone;
     private ?AccountName $accountName;
-    private ?Sex $sex;
     private ?Password $password;
-    private UserStatus $status;
+    private AccountStatus $status;
 
     public function __construct(Uuid $uuid, Login $login)
     {
@@ -54,17 +52,12 @@ class Account implements AggregateRoot
         return $this->accountName;
     }
 
-    public function getSex(): ?Sex
-    {
-        return $this->sex;
-    }
-
     public function getEmail(): ?Email
     {
         return $this->email;
     }
 
-    public function getStatus(): UserStatus
+    public function getStatus(): AccountStatus
     {
         return $this->status;
     }
@@ -90,7 +83,6 @@ class Account implements AggregateRoot
                 'firstName' => $this->getAccountName()?->getFirstName(),
                 'lastName' => $this->getAccountName()?->getLastName(),
             ],
-            'sex' => $this->getSex()?->getSex(),
             'status' => $this->getStatus()->getStatus()
         ];
     }
