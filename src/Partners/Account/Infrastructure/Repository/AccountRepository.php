@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Partners\Partner\Infrastructure\Repository;
+namespace MarketPlace\Partners\Account\Infrastructure\Repository;
 
 use App\Models\User as UserDB;
 use Auth;
@@ -24,7 +24,7 @@ use MarketPlace\Market\User\Domain\ValueObject\UserId;
 use MarketPlace\Market\User\Domain\ValueObject\UserName;
 use MarketPlace\Market\User\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Market\User\Infrastructure\Exception\UserUnauthenticatedException;
-use MarketPlace\Partners\Partner\Domain\Repository\AccountRepositoryInterface;
+use MarketPlace\Partners\Account\Domain\Repository\AccountRepositoryInterface;
 
 class AccountRepository implements AccountRepositoryInterface
 {
