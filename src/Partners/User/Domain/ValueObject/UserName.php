@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Partners\Account\Domain\ValueObject;
+namespace MarketPlace\Partners\User\Domain\ValueObject;
 
-class AccountName
+class UserName
 {
     private ?string $firstName;
     private ?string $lastName;

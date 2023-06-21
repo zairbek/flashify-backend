@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Partners\Account\Infrastructure\Api;
+namespace MarketPlace\Partners\User\Infrastructure\Api;
 
 use App;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
-use MarketPlace\Partners\Account\Application\Service\AccountService;
-use MarketPlace\Partners\Account\Infrastructure\Exception\AccountNotFoundException;
+use MarketPlace\Partners\User\Application\Service\UserService;
+use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
 
-class AccountApi
+class UserApi
 {
-    private AccountService $accountService;
+    private UserService $accountService;
 
     public function __construct()
     {
-        $this->accountService = App::make(AccountService::class);
+        $this->accountService = App::make(UserService::class);
     }
 
     public function findAccount(string $id): array
@@ -35,7 +35,7 @@ class AccountApi
                 'sex' => $user->getSex()?->getSex(),
                 'status' => $user->getStatus()->getStatus()
             ];
-        } catch (AccountNotFoundException $e) {
+        } catch (UserNotFoundException $e) {
             return [];
         }
     }

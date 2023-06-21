@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Partners\Account\Domain\ValueObject;
+namespace MarketPlace\Partners\User\Domain\ValueObject;
 
 use Webmozart\Assert\Assert;
 
-class AccountStatus
+class UserStatus
 {
     private const ACTIVE = 'active';
     private const INACTIVE = 'inactive';

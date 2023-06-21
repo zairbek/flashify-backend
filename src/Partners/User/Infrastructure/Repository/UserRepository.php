@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Partners\Account\Infrastructure\Repository;
+namespace MarketPlace\Partners\User\Infrastructure\Repository;
 
 use App\Models\User as UserDB;
 use Auth;
@@ -24,9 +24,9 @@ use MarketPlace\Market\User\Domain\ValueObject\UserId;
 use MarketPlace\Market\User\Domain\ValueObject\UserName;
 use MarketPlace\Market\User\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Market\User\Infrastructure\Exception\UserUnauthenticatedException;
-use MarketPlace\Partners\Account\Domain\Repository\AccountRepositoryInterface;
+use MarketPlace\Partners\User\Domain\Repository\UserRepositoryInterface;
 
-class AccountRepository implements AccountRepositoryInterface
+class UserRepository implements UserRepositoryInterface
 {
 
     private Hydrator $hydrator;

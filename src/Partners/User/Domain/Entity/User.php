@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Partners\Account\Domain\Entity;
+namespace MarketPlace\Partners\User\Domain\Entity;
 
 use MarketPlace\Common\Domain\Entity\AggregateRoot;
 use MarketPlace\Common\Domain\Entity\EventTrait;
@@ -11,10 +11,10 @@ use MarketPlace\Common\Domain\ValueObject\Login;
 use MarketPlace\Common\Domain\ValueObject\Password;
 use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
-use MarketPlace\Partners\Account\Domain\ValueObject\AccountName;
-use MarketPlace\Partners\Account\Domain\ValueObject\AccountStatus;
+use MarketPlace\Partners\User\Domain\ValueObject\UserName;
+use MarketPlace\Partners\User\Domain\ValueObject\UserStatus;
 
-class Account implements AggregateRoot
+class User implements AggregateRoot
 {
     use EventTrait;
 
@@ -47,7 +47,7 @@ class Account implements AggregateRoot
         return $this->login;
     }
 
-    public function getAccountName(): ?AccountName
+    public function getAccountName(): ?UserName
     {
         return $this->accountName;
     }
@@ -57,7 +57,7 @@ class Account implements AggregateRoot
         return $this->email;
     }
 
-    public function getStatus(): AccountStatus
+    public function getStatus(): UserStatus
     {
         return $this->status;
     }
