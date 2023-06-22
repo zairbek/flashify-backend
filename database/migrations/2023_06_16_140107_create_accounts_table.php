@@ -23,7 +23,10 @@ return new class extends Migration
             $table->unique(['region_iso_code', 'phone_number', 'email']);
 
             $table->json('confirmation_code')->nullable()
-                ->default(json_encode(['email' => null, 'phone' => null], JSON_THROW_ON_ERROR));
+                ->default(json_encode([
+                    'email' => ['code' => null, 'sendAt' => null],
+                    'phone' => ['code' => null, 'sendAt' => null]
+                ], JSON_THROW_ON_ERROR));
 
             $table->string('first_name', 255)->nullable();
             $table->string('last_name', 255)->nullable();
