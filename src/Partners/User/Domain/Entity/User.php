@@ -6,11 +6,11 @@ namespace MarketPlace\Partners\User\Domain\Entity;
 
 use MarketPlace\Common\Domain\Entity\AggregateRoot;
 use MarketPlace\Common\Domain\Entity\EventTrait;
-use MarketPlace\Common\Domain\ValueObject\Email;
 use MarketPlace\Common\Domain\ValueObject\Login;
 use MarketPlace\Common\Domain\ValueObject\Password;
-use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Partners\User\Domain\ValueObject\Email;
+use MarketPlace\Partners\User\Domain\ValueObject\Phone;
 use MarketPlace\Partners\User\Domain\ValueObject\UserName;
 use MarketPlace\Partners\User\Domain\ValueObject\UserStatus;
 
@@ -22,9 +22,9 @@ class User implements AggregateRoot
     private Login $login;
     private ?Email $email;
     private ?Phone $phone;
-    private ?AccountName $accountName;
+    private ?UserName $userName;
     private ?Password $password;
-    private AccountStatus $status;
+    private UserStatus $status;
 
     public function __construct(Uuid $uuid, Login $login)
     {
@@ -49,7 +49,7 @@ class User implements AggregateRoot
 
     public function getAccountName(): ?UserName
     {
-        return $this->accountName;
+        return $this->userName;
     }
 
     public function getEmail(): ?Email

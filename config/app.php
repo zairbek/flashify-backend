@@ -210,6 +210,12 @@ return [
          */
         MarketPlace\Market\Auth\Infrastructure\ServiceProvider\AuthServiceProvider::class,
         MarketPlace\Market\User\Infrastructure\ServiceProvider\UserServiceProvider::class,
+
+        /*
+         * Module Partners
+         */
+        MarketPlace\Partners\Auth\Infrastructure\ServiceProvider\AuthServiceProvider::class,
+        MarketPlace\Partners\User\Infrastructure\ServiceProvider\UserServiceProvider::class,
     ],
 
     /*

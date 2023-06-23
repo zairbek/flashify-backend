@@ -4,27 +4,28 @@ declare(strict_types=1);
 
 namespace MarketPlace\Partners\User\Infrastructure\Repository;
 
-use App\Models\User as UserDB;
+use App\Models\Account;
 use Auth;
+use DateTime;
+use Exception;
 use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\CreatedAt;
-use MarketPlace\Common\Domain\ValueObject\Email;
 use MarketPlace\Common\Domain\ValueObject\Login;
-use MarketPlace\Common\Domain\ValueObject\Phone;
 use MarketPlace\Common\Domain\ValueObject\SendAt;
-use MarketPlace\Common\Domain\ValueObject\Sex;
-use MarketPlace\Common\Domain\ValueObject\UserStatus;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Domain\ValueObject\VerifiedAt;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
-use MarketPlace\Market\User\Domain\Entity\User;
 use MarketPlace\Market\User\Domain\Entity\UserEmail;
 use MarketPlace\Market\User\Domain\Entity\UserPhoneNumber;
 use MarketPlace\Market\User\Domain\ValueObject\UserId;
-use MarketPlace\Market\User\Domain\ValueObject\UserName;
-use MarketPlace\Market\User\Infrastructure\Exception\UserNotFoundException;
-use MarketPlace\Market\User\Infrastructure\Exception\UserUnauthenticatedException;
+use MarketPlace\Partners\User\Domain\ValueObject\Email;
+use MarketPlace\Partners\User\Domain\ValueObject\Phone;
+use MarketPlace\Partners\User\Domain\ValueObject\UserName;
+use MarketPlace\Partners\User\Domain\Entity\User;
 use MarketPlace\Partners\User\Domain\Repository\UserRepositoryInterface;
+use MarketPlace\Partners\User\Domain\ValueObject\UserStatus;
+use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
+use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -41,6 +42,40 @@ class UserRepository implements UserRepositoryInterface
         UserDB::create([
             'uuid' => $user->getUuid()->getId(),
             'login' => $user->getLogin()->getLogin(),
+        ]);
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function update(User $user): void
+    {
+        $account = Account::query()->firstWhere('uuid', $user->getUuid()->getId());
+
+        if (is_null($account)) {
+            throw new UserNotFoundException();
+        }
+
+        $confirmationCode = [
+            'email' => [
+                'code' => $user->getEmail()?->getCode(),
+                'sendAt' => $user->getEmail()?->getSendAt()?->toIsoFormat(),
+            ],
+            'phone' => [
+                'code' => $user->getPhone()?->getCode(),
+                'sendAt' => $user->getPhone()?->getSendAt()?->toIsoFormat(),
+            ],
+        ];
+
+        $account->update([
+            'login' => $user->getLogin()->getLogin(),
+            'first_name' => $user->getAccountName()?->getFirstName(),
+            'last_name' => $user->getAccountName()?->getLastName(),
+            'region_iso_code' => $user->getPhone()?->getRegionCode(),
+            'phone_number' => $user->getPhone()?->toString(),
+            'email' => $user->getEmail()?->getEmail(),
+            'status' => $user->getStatus()->getStatus(),
+            'confirmation_code' => $confirmationCode,
         ]);
     }
 
@@ -77,37 +112,80 @@ class UserRepository implements UserRepositoryInterface
         return $this->userHydrator($userDb);
     }
 
-    private function userHydrator(UserDB $userDb): User
+    /**
+     * @throws UserNotFoundException
+     * @throws Exception
+     */
+    public function findByPhone(Phone $phone): User
     {
+        /** @var Account $account */
+        $account = Account::query()->firstWhere('phone_number', '=', $phone->toString());
+
+        if (is_null($account)) {
+            throw new UserNotFoundException();
+        }
+
+        return $this->userHydrator($account);
+    }
+
+    /**
+     * @throws UserNotFoundException
+     * @throws Exception
+     */
+    public function findByEmail(Email $email): User
+    {
+        /** @var Account $account */
+        $account = Account::query()->firstWhere('email', '=', $email->getEmail());
+
+        if (is_null($account)) {
+            throw new UserNotFoundException();
+        }
+
+        return $this->userHydrator($account);
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function userHydrator(Account $userDb): User
+    {
+        $phoneCodeSendAt = null;
+        if (
+            isset($userDb->confirmation_code['phone']['sendAt'])
+            && !is_null($userDb->confirmation_code['phone']['sendAt'])
+        ) {
+            $phoneCodeSendAt = SendAt::fromIsoFormat($userDb->confirmation_code['phone']['sendAt']);
+        }
+
+        $emailCodeSendAt = null;
+        if (
+            isset($userDb->confirmation_code['email']['sendAt'])
+            && !is_null($userDb->confirmation_code['email']['sendAt'])
+        ) {
+            $emailCodeSendAt = SendAt::fromIsoFormat($userDb->confirmation_code['email']['sendAt']);
+        }
+
         return $this->hydrator->hydrate(User::class, [
             'uuid' => new Uuid($userDb->uuid),
             'login' => new Login($userDb->login),
             'userName' => new UserName(
                 firstName: $userDb->first_name,
                 lastName: $userDb->last_name,
-                middleName: $userDb->middle_name,
             ),
-            'phone' => $userDb->phone
-                ? $this->hydrator->hydrate(UserPhoneNumber::class, [
-                    'uuid' => new Uuid($userDb->phone->uuid),
-                    'phone' => Phone::fromString($userDb->phone->region_iso_code, $userDb->phone->phone_number),
-                    'createdAt' => new CreatedAt($userDb->phone->created_at->toDateTime()),
-                    'userId' => $userDb->phone->user_id ? new UserId(new Uuid($userDb->phone->user_id)) : null,
-                    'confirmationCode' => $userDb->phone->confirmation_code ? new ConfirmationCode($userDb->phone->confirmation_code) : null,
-                    'sendAt' => $userDb->phone->send_at ? new SendAt($userDb->phone->send_at->toDateTime()) : null,
-                ])
+            'phone' => $userDb->phone_number
+                ? Phone::fromString(
+                    $userDb->region_iso_code,
+                    $userDb->phone_number,
+                    $userDb->confirmation_code['phone']['code'] ?? null,
+                    $phoneCodeSendAt
+                )
                 : null,
             'email' => $userDb->email
-                ? $this->hydrator->hydrate(UserEmail::class, [
-                    'uuid' => new Uuid($userDb->email->uuid),
-                    'email' => new Email($userDb->email->email),
-                    'confirmationCode' => $userDb->email->confirmation_code ? new ConfirmationCode($userDb->email->confirmation_code) : null,
-                    'sendAt' => $userDb->email->send_at ? new SendAt($userDb->email->send_at->toDateTime()) : null,
-                    'verifiedAt' => $userDb->email->email_verified_at ? new VerifiedAt($userDb->email->email_verified_at->toDateTime()) : null,
-                    'userUuid' => $userDb->email->user_uuid ? new UserId(new Uuid($userDb->email->user_uuid)) : null,
-                ])
-                : null,
-            'sex' => $userDb->sex ? new Sex($userDb->sex) : null,
+                ? new Email(
+                    $userDb->email,
+                    $userDb->confirmation_code['email']['code'] ?? null,
+                    $emailCodeSendAt
+                ) : null,
             'status' => new UserStatus($userDb->status),
         ]);
     }

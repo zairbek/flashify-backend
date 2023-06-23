@@ -3,24 +3,38 @@
 namespace MarketPlace\Partners\User\Domain\Repository;
 
 use MarketPlace\Common\Domain\ValueObject\Uuid;
-use MarketPlace\Partners\User\Domain\Entity\Account;
+use MarketPlace\Partners\User\Domain\Entity\User;
+use MarketPlace\Partners\User\Domain\ValueObject\Email;
+use MarketPlace\Partners\User\Domain\ValueObject\Phone;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
 
 interface UserRepositoryInterface
 {
-    public function create(Account $user): void;
+    public function create(User $user): void;
 
     /**
-     * @param Uuid $uuid
-     * @return Account
      * @throws UserNotFoundException
      */
-    public function find(Uuid $uuid): Account;
+    public function update(User $user): void;
 
     /**
-     * @return Account
+     * @throws UserNotFoundException
+     */
+    public function find(Uuid $uuid): User;
+
+    /**
      * @throws UserUnauthenticatedException
      */
-    public function me(): Account;
+    public function me(): User;
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function findByPhone(Phone $phone): User;
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function findByEmail(Email $email): User;
 }

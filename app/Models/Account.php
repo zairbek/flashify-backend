@@ -6,6 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 
+/**
+ * @property string $uuid
+ * @property string $login
+ * @property string $first_name
+ * @property string $last_name
+ * @property string|null $region_iso_code
+ * @property string|null $phone_number
+ * @property string|null $email
+ * @property array|null $confirmation_code
+ * @property string|null $password
+ * @property string $status
+ */
 class Account extends Model
 {
     use Notifiable;
@@ -33,5 +45,6 @@ class Account extends Model
     ];
 
     protected $casts = [
+        'confirmation_code' => 'array'
     ];
 }
