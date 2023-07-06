@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Partners\V1\Auth\Email\SignInWithEmailAndCodeContro
 use App\Http\Controllers\Api\Partners\V1\Auth\Phone\RequestCodeToPhoneNumberController;
 use App\Http\Controllers\Api\Partners\V1\Auth\Phone\SignInWithPhoneAndCodeController;
 use App\Http\Controllers\Api\Partners\V1\DocumentationController;
+use App\Http\Controllers\Api\Partners\V1\Me\GetMeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -39,4 +40,8 @@ Route::prefix('auth')->group(function () {
     });
 //    Route::post('refresh-token', RefreshTokenController::class);
 //    Route::get('sign-out', SignOutController::class)->middleware(['auth:api']);
+});
+
+Route::middleware(['auth:api-partners'])->group(function () {
+    Route::get('me', GetMeController::class);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -18,7 +19,7 @@ use Laravel\Passport\HasApiTokens;
  * @property string|null $password
  * @property string $status
  */
-class Account extends Model
+class Account extends Authenticatable
 {
     use Notifiable;
     use HasApiTokens;

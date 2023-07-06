@@ -97,17 +97,16 @@ class UserRepository implements UserRepositoryInterface
     /**
      * @return User
      * @throws UserUnauthenticatedException
+     * @throws Exception
      */
     public function me(): User
     {
-        /** @var UserDB $userDb */
+        /** @var Account $userDb */
         $userDb = Auth::user();
 
         if (is_null($userDb)) {
             throw new UserUnauthenticatedException();
         }
-
-        $userDb->load(['phone', 'email']);
 
         return $this->userHydrator($userDb);
     }
