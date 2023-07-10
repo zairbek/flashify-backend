@@ -15,6 +15,7 @@ use MarketPlace\Partners\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\SendSmsThrottleException;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
+use Webmozart\Assert\InvalidArgumentException;
 
 class RequestCodeToPhoneNumberController extends Controller
 {
@@ -40,6 +41,8 @@ class RequestCodeToPhoneNumberController extends Controller
             throw ValidationException::withMessages(['phone' => ['Повторная отправка возможно через 1 минута']]);
         } catch (UserPhoneNotFoundException|UserNotFoundException $e) {
             throw ValidationException::withMessages(['phone' => ['Пользователь не найден']]);
+        } catch (InvalidArgumentException $e) {
+            throw ValidationException::withMessages(['phone' => ['Неправильный телефон номер']]);
         } catch (Exception $e) {
             return response()->json(['errors' => $e->getMessage()], 400);
         }

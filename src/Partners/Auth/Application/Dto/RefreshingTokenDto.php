@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace MarketPlace\Market\Auth\Application\Dto;
+namespace MarketPlace\Partners\Auth\Application\Dto;
 
 class RefreshingTokenDto
 {

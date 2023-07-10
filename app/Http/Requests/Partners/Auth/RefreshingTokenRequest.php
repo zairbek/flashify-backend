@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Market\Auth;
+namespace App\Http\Requests\Partners\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
