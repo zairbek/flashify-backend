@@ -86,4 +86,9 @@ class User implements AggregateRoot
             'status' => $this->getStatus()->getStatus()
         ];
     }
+
+    public function changeUserName(?UserName $userName): void
+    {
+        $this->userName = $userName;
+    }
 }

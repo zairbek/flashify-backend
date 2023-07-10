@@ -84,8 +84,8 @@ class UserRepository implements UserRepositoryInterface
      */
     public function find(Uuid $uuid): User
     {
-        /** @var UserDB $userDb */
-        $userDb = UserDB::query()->with(['phone', 'email'])->where('uuid', $uuid->getId())->first();
+        /** @var Account $userDb */
+        $userDb = Account::query()->where('uuid', $uuid->getId())->first();
 
         if (is_null($userDb)) {
             throw new UserNotFoundException();

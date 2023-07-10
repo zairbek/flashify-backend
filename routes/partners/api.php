@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Partners\V1\Auth\Phone\SignInWithPhoneAndCodeContro
 use App\Http\Controllers\Api\Partners\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Partners\V1\DocumentationController;
 use App\Http\Controllers\Api\Partners\V1\Me\GetMeController;
+use App\Http\Controllers\Api\Partners\V1\Me\UpdateMeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -45,4 +46,5 @@ Route::prefix('auth')->group(function () {
 
 Route::middleware(['auth:api-partners'])->group(function () {
     Route::get('me', GetMeController::class);
+    Route::post('me', UpdateMeController::class);
 });

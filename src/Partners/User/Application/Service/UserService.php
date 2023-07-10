@@ -12,6 +12,7 @@ use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
 use MarketPlace\Partners\User\Application\Dto\FindUserByPhoneDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserDto;
+use MarketPlace\Partners\User\Application\Dto\UpdateUserNameDto;
 use MarketPlace\Partners\User\Domain\Entity\User;
 use MarketPlace\Partners\User\Domain\Repository\UserRepositoryInterface;
 use MarketPlace\Partners\User\Domain\ValueObject\Email;
@@ -65,6 +66,16 @@ class UserService
             'status' => new UserStatus($dto->status),
         ]);
 
+        $this->repository->update($user);
+    }
+
+    /**
+     * @throws UserNotFoundException
+     */
+    public function updateUserName(UpdateUserNameDto $dto)
+    {
+        $user = $this->repository->find(new Uuid($dto->uuid));
+        $user->changeUserName(new UserName($dto->firstName, $dto->lastName));
         $this->repository->update($user);
     }
 
