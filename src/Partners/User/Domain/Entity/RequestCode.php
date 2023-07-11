@@ -95,4 +95,18 @@ class RequestCode implements AggregateRoot
     {
         $this->recipient = $recipient;
     }
+
+    public function isConfirmationCodeCorrect(Email|Phone $recipient, ConfirmationCode $confirmationCode): bool
+    {
+        if (
+            $recipient instanceof Email
+            && $this->getRecipient() instanceof Email
+        ) {
+            return $recipient->getEmail() === $this->getRecipient()->getEmail()
+                && $this->getCode()->getCode() === $confirmationCode->getCode();
+        }
+
+        return $this->getRecipient()->isEqualTo($recipient)
+            && $this->getCode()->getCode() === $confirmationCode->getCode();
+    }
 }

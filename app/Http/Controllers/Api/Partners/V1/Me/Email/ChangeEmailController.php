@@ -10,12 +10,12 @@ use DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
-use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
-use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
-use MarketPlace\Partners\Auth\Application\Dto\SignInWithEmailDto;
-use MarketPlace\Partners\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
-use MarketPlace\Partners\Auth\Infrastructure\Exception\UserNotFoundException;
+use MarketPlace\Partners\User\Application\Dto\ChangeEmailDto;
 use MarketPlace\Partners\User\Application\Service\UserService;
+use MarketPlace\Partners\User\Infrastructure\Exception\ConfirmationCodeIncorrectException;
+use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeNotFoundException;
+use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
+use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
 use Throwable;
 
 class ChangeEmailController extends Controller
@@ -35,24 +35,18 @@ class ChangeEmailController extends Controller
         DB::beginTransaction();
 
         try {
-            $token = $this->service->signInWithEmail(new SignInWithEmailDto(
+            $this->service->changeEmail(new ChangeEmailDto(
                 email: $request->get('email'),
                 confirmationCode: $request->get('code')
             ));
             DB::commit();
-            return response()->json($token->toArray());
-        } catch (UserIsBannedException $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Аккаунт пользователя забанен'], Response::HTTP_FORBIDDEN);
-        } catch (UserIsInactiveException $e) {
-            DB::rollBack();
-            return response()->json(['message' => 'Аккаунт пользователя неактивен'], Response::HTTP_FORBIDDEN);
-        } catch (ConfirmationCodeIsNotMatchException $e) {
+            return response()->json(['message' => 'ok']);
+        } catch (ConfirmationCodeIncorrectException|RequestCodeNotFoundException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['code' => ['Неправильный код подтверждение']]);
-        } catch (UserNotFoundException $e) {
+        } catch (UserNotFoundException|UserUnauthenticatedException $e) {
             DB::rollBack();
-            throw ValidationException::withMessages(['email' => ['phone not found']]);
+            return response()->json(['message' => $e], 400);
         }
     }
 }

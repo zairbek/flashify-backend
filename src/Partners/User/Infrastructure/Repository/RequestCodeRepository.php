@@ -98,8 +98,12 @@ class RequestCodeRepository implements RequestCodeRepositoryInterface
      */
     public function findByUser(Uuid $userUuid): RequestCode
     {
-        /** @var RequestCodeDB $requestCode */
+        /** @var RequestCodeDB|null $requestCode */
         $requestCode = RequestCodeDB::query()->firstWhere('account_uuid', $userUuid->getId());
+
+        if (is_null($requestCode)) {
+            throw new RequestCodeNotFoundException();
+        }
 
         return $this->hydrate($requestCode);
     }

@@ -53,7 +53,7 @@ Route::middleware(['auth:api-partners'])->group(function () {
 
         Route::prefix('email')->group(function () {
             Route::post('request', RequestCodeToChangeEmailController::class);
-//            Route::post('change', ChangeEmailController::class);
+            Route::post('change', ChangeEmailController::class);
         });
     });
 });

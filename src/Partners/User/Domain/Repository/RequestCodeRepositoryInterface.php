@@ -14,6 +14,8 @@ interface RequestCodeRepositoryInterface
 
     public function update(RequestCode $requestCode): void;
 
+    public function delete(RequestCode $requestCode): void;
+
     /**
      * @throws RequestCodeNotFoundException
      */

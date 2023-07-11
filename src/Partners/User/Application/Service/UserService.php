@@ -11,6 +11,7 @@ use MarketPlace\Common\Domain\ValueObject\Login;
 use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
+use MarketPlace\Partners\User\Application\Dto\ChangeEmailDto;
 use MarketPlace\Partners\User\Application\Dto\FindUserByPhoneDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserNameDto;
@@ -22,6 +23,7 @@ use MarketPlace\Partners\User\Domain\ValueObject\Email;
 use MarketPlace\Partners\User\Domain\ValueObject\Phone;
 use MarketPlace\Partners\User\Domain\ValueObject\UserName;
 use MarketPlace\Partners\User\Domain\ValueObject\UserStatus;
+use MarketPlace\Partners\User\Infrastructure\Exception\ConfirmationCodeIncorrectException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
@@ -113,6 +115,27 @@ class UserService
 
             $this->codeRepository->create($requestCode);
         }
+    }
+
+    /**
+     * @throws ConfirmationCodeIncorrectException
+     * @throws UserNotFoundException
+     * @throws UserUnauthenticatedException
+     * @throws RequestCodeNotFoundException
+     */
+    public function changeEmail(ChangeEmailDto $dto): void
+    {
+        $user = $this->repository->me();
+        $emailVO = new \MarketPlace\Common\Domain\ValueObject\Email($dto->email);
+
+        $requestCode = $this->codeRepository->findByUser($user->getUuid());
+        if (! $requestCode->isConfirmationCodeCorrect($emailVO, new ConfirmationCode($dto->confirmationCode))) {
+            throw new ConfirmationCodeIncorrectException();
+        }
+
+        $user->changeEmail(new Email($emailVO->getEmail()));
+        $this->repository->update($user);
+        $this->codeRepository->delete($requestCode);
     }
 
     /**
