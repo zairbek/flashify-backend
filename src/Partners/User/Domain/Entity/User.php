@@ -91,4 +91,9 @@ class User implements AggregateRoot
     {
         $this->userName = $userName;
     }
+
+    public function changeEmail(?Email $email): void
+    {
+        $this->email = $email;
+    }
 }

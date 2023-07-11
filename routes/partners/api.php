@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\Partners\V1\Auth\Phone\RequestCodeToPhoneNumberCont
 use App\Http\Controllers\Api\Partners\V1\Auth\Phone\SignInWithPhoneAndCodeController;
 use App\Http\Controllers\Api\Partners\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Partners\V1\DocumentationController;
+use App\Http\Controllers\Api\Partners\V1\Me\Email\ChangeEmailController;
+use App\Http\Controllers\Api\Partners\V1\Me\Email\RequestCodeToChangeEmailController;
 use App\Http\Controllers\Api\Partners\V1\Me\GetMeController;
 use App\Http\Controllers\Api\Partners\V1\Me\UpdateMeController;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +47,13 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::middleware(['auth:api-partners'])->group(function () {
-    Route::get('me', GetMeController::class);
-    Route::post('me', UpdateMeController::class);
+    Route::prefix('me')->group(function () {
+        Route::get('', GetMeController::class);
+        Route::post('', UpdateMeController::class);
+
+        Route::prefix('email')->group(function () {
+            Route::post('request', RequestCodeToChangeEmailController::class);
+//            Route::post('change', ChangeEmailController::class);
+        });
+    });
 });

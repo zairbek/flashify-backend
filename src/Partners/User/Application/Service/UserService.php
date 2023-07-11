@@ -6,6 +6,7 @@ namespace MarketPlace\Partners\User\Application\Service;
 
 use Exception;
 use MarketPlace\Common\Domain\Events\EventDispatcher;
+use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
 use MarketPlace\Common\Domain\ValueObject\Login;
 use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
@@ -13,12 +14,16 @@ use MarketPlace\Common\Infrastructure\Service\Hydrator;
 use MarketPlace\Partners\User\Application\Dto\FindUserByPhoneDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserNameDto;
+use MarketPlace\Partners\User\Domain\Entity\RequestCode;
 use MarketPlace\Partners\User\Domain\Entity\User;
+use MarketPlace\Partners\User\Domain\Repository\RequestCodeRepositoryInterface;
 use MarketPlace\Partners\User\Domain\Repository\UserRepositoryInterface;
 use MarketPlace\Partners\User\Domain\ValueObject\Email;
 use MarketPlace\Partners\User\Domain\ValueObject\Phone;
 use MarketPlace\Partners\User\Domain\ValueObject\UserName;
 use MarketPlace\Partners\User\Domain\ValueObject\UserStatus;
+use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeNotFoundException;
+use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
 
@@ -30,12 +35,17 @@ class UserService
     private EventDispatcher $eventDispatcher;
     private UserRepositoryInterface $repository;
     private Hydrator $hydrator;
+    private RequestCodeRepositoryInterface $codeRepository;
 
-    public function __construct(UserRepositoryInterface $repository)
+    public function __construct(
+        UserRepositoryInterface $repository,
+        RequestCodeRepositoryInterface $codeRepository,
+    )
     {
         $this->eventDispatcher = new EventDispatcher($this->listeners);
         $this->repository = $repository;
         $this->hydrator  = new Hydrator();
+        $this->codeRepository = $codeRepository;
     }
 
     /**
@@ -77,6 +87,32 @@ class UserService
         $user = $this->repository->find(new Uuid($dto->uuid));
         $user->changeUserName(new UserName($dto->firstName, $dto->lastName));
         $this->repository->update($user);
+    }
+
+    /**
+     * @throws UserUnauthenticatedException
+     * @throws RequestCodeThrottlingException
+     */
+    public function requestCodeToChangeEmail(string $email): void
+    {
+        $user = $this->repository->me();
+        $emailVO = new \MarketPlace\Common\Domain\ValueObject\Email($email);
+
+        try {
+            $requestCode = $this->codeRepository->findByUser($user->getUuid());
+            $requestCode->setRecipient($emailVO);
+            $requestCode->sendSmsConfirmationCode();
+            $this->codeRepository->update($requestCode);
+        } catch (RequestCodeNotFoundException $e) {
+            $requestCode = new RequestCode(
+                uuid: Uuid::next(),
+                userUuid: $user->getUuid(),
+                recipient: $emailVO,
+                code: ConfirmationCode::generate(),
+            );
+
+            $this->codeRepository->create($requestCode);
+        }
     }
 
     /**
