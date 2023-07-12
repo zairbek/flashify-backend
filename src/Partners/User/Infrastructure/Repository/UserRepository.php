@@ -143,6 +143,27 @@ class UserRepository implements UserRepositoryInterface
         return $this->userHydrator($account);
     }
 
+    public function existByEmail(Email $email, ?Uuid $without = null): bool
+    {
+        $query = Account::query()->where('email', $email->getEmail());
+        if ($without) {
+            $query->whereNot('uuid', $without->getId());
+        }
+
+        return $query->exists();
+    }
+
+    public function existByPhone(Phone $phone, ?Uuid $without = null): bool
+    {
+        $query = Account::query()->where('phone', $phone->toString())
+            ->where('region_iso_code', $phone->getRegionCode());
+        if ($without) {
+            $query->whereNot('uuid', $without->getId());
+        }
+
+        return $query->exists();
+    }
+
     /**
      * @throws Exception
      */

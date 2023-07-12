@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\User\Application\Service\UserService;
+use MarketPlace\Partners\User\Infrastructure\Exception\PhoneAlreadyRegisteredException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
 
@@ -34,15 +35,15 @@ class RequestCodeToChangePhoneController extends Controller
             return response()->json(['message' => 'ok']);
         } catch (RequestCodeThrottlingException $e) {
             DB::rollBack();
-            throw ValidationException::withMessages(['email' => ['Повторная отправка возможно через 1 минута']]);
+            throw ValidationException::withMessages(['phone' => ['Повторная отправка возможно через 1 минута']]);
+        } catch (PhoneAlreadyRegisteredException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['phone' => ['Телефон номер уже зарегистрирован']]);
         } catch (UserNotFoundException $e) {
             DB::rollBack();
-            throw ValidationException::withMessages(['email' => ['Пользователь не найден']]);
+            throw ValidationException::withMessages(['phone' => ['Пользователь не найден']]);
         } catch (UserUnauthenticatedException $e) {
             return response()->json(['errors' => $e->getMessage()], 401);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
 }

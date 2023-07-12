@@ -37,4 +37,8 @@ interface UserRepositoryInterface
      * @throws UserNotFoundException
      */
     public function findByEmail(Email $email): User;
+
+    public function existByEmail(Email $email, ?Uuid $without = null): bool;
+
+    public function existByPhone(Phone $phone, ?Uuid $without = null): bool;
 }

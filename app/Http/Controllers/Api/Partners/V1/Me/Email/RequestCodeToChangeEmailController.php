@@ -13,6 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\User\Application\Service\UserService;
+use MarketPlace\Partners\User\Infrastructure\Exception\EmailAlreadyRegisteredException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
 
@@ -35,14 +36,14 @@ class RequestCodeToChangeEmailController extends Controller
         } catch (RequestCodeThrottlingException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['email' => ['Повторная отправка возможно через 1 минута']]);
+        } catch (EmailAlreadyRegisteredException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['email' => ['Email уже используется']]);
         } catch (UserNotFoundException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['email' => ['Пользователь не найден']]);
         } catch (UserUnauthenticatedException $e) {
             return response()->json(['errors' => $e->getMessage()], 401);
-        } catch (Exception $e) {
-            DB::rollBack();
-            return response()->json(['errors' => $e->getMessage()], 400);
         }
     }
 }

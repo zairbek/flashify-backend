@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use MarketPlace\Partners\User\Application\Dto\ChangeEmailDto;
 use MarketPlace\Partners\User\Application\Service\UserService;
 use MarketPlace\Partners\User\Infrastructure\Exception\ConfirmationCodeIncorrectException;
+use MarketPlace\Partners\User\Infrastructure\Exception\EmailAlreadyRegisteredException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
@@ -47,6 +48,9 @@ class ChangeEmailController extends Controller
         } catch (UserNotFoundException|UserUnauthenticatedException $e) {
             DB::rollBack();
             return response()->json(['message' => $e], 400);
+        } catch (EmailAlreadyRegisteredException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['email' => ['Email уже используется']]);
         }
     }
 }

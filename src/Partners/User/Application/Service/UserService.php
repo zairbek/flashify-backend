@@ -25,6 +25,8 @@ use MarketPlace\Partners\User\Domain\ValueObject\Phone;
 use MarketPlace\Partners\User\Domain\ValueObject\UserName;
 use MarketPlace\Partners\User\Domain\ValueObject\UserStatus;
 use MarketPlace\Partners\User\Infrastructure\Exception\ConfirmationCodeIncorrectException;
+use MarketPlace\Partners\User\Infrastructure\Exception\EmailAlreadyRegisteredException;
+use MarketPlace\Partners\User\Infrastructure\Exception\PhoneAlreadyRegisteredException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
@@ -95,11 +97,16 @@ class UserService
     /**
      * @throws UserUnauthenticatedException
      * @throws RequestCodeThrottlingException
+     * @throws EmailAlreadyRegisteredException
      */
     public function requestCodeToChangeEmail(string $email): void
     {
         $user = $this->repository->me();
         $emailVO = new \MarketPlace\Common\Domain\ValueObject\Email($email);
+
+        if ($this->repository->existByEmail(new Email($emailVO->getEmail()))) {
+            throw new EmailAlreadyRegisteredException();
+        }
 
         try {
             $requestCode = $this->codeRepository->findByUser($user->getUuid());
@@ -123,11 +130,16 @@ class UserService
      * @throws UserNotFoundException
      * @throws UserUnauthenticatedException
      * @throws RequestCodeNotFoundException
+     * @throws EmailAlreadyRegisteredException
      */
     public function changeEmail(ChangeEmailDto $dto): void
     {
         $user = $this->repository->me();
         $emailVO = new \MarketPlace\Common\Domain\ValueObject\Email($dto->email);
+
+        if ($this->repository->existByEmail(new Email($emailVO->getEmail()))) {
+            throw new EmailAlreadyRegisteredException();
+        }
 
         $requestCode = $this->codeRepository->findByUser($user->getUuid());
         if (! $requestCode->isConfirmationCodeCorrect($emailVO, new ConfirmationCode($dto->confirmationCode))) {
@@ -142,11 +154,16 @@ class UserService
     /**
      * @throws UserUnauthenticatedException
      * @throws RequestCodeThrottlingException
+     * @throws PhoneAlreadyRegisteredException
      */
     public function requestCodeToChangePhone(string $regionCode, string $phone): void
     {
         $user = $this->repository->me();
         $phoneVO = \MarketPlace\Common\Domain\ValueObject\Phone::fromString($regionCode, $phone);
+
+        if ($this->repository->existByPhone(Phone::fromString($regionCode, $phone))) {
+            throw new PhoneAlreadyRegisteredException();
+        }
 
         try {
             $requestCode = $this->codeRepository->findByUser($user->getUuid());
@@ -170,11 +187,16 @@ class UserService
      * @throws UserNotFoundException
      * @throws UserUnauthenticatedException
      * @throws RequestCodeNotFoundException
+     * @throws PhoneAlreadyRegisteredException
      */
     public function changePhone(ChangePhoneDto $dto): void
     {
         $user = $this->repository->me();
         $phoneVO = \MarketPlace\Common\Domain\ValueObject\Phone::fromString($dto->regionCode, $dto->number);
+
+        if ($this->repository->existByPhone(Phone::fromString($dto->regionCode, $dto->number))) {
+            throw new PhoneAlreadyRegisteredException();
+        }
 
         $requestCode = $this->codeRepository->findByUser($user->getUuid());
         if (! $requestCode->isConfirmationCodeCorrect($phoneVO, new ConfirmationCode($dto->confirmationCode))) {

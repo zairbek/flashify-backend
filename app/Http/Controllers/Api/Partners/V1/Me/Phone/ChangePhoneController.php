@@ -15,6 +15,7 @@ use MarketPlace\Partners\User\Application\Dto\ChangeEmailDto;
 use MarketPlace\Partners\User\Application\Dto\ChangePhoneDto;
 use MarketPlace\Partners\User\Application\Service\UserService;
 use MarketPlace\Partners\User\Infrastructure\Exception\ConfirmationCodeIncorrectException;
+use MarketPlace\Partners\User\Infrastructure\Exception\PhoneAlreadyRegisteredException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserUnauthenticatedException;
@@ -50,6 +51,9 @@ class ChangePhoneController extends Controller
         } catch (UserNotFoundException|UserUnauthenticatedException $e) {
             DB::rollBack();
             return response()->json(['message' => $e], 400);
+        } catch (PhoneAlreadyRegisteredException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['phone' => ['Телефон номер уже зарегистрирован']]);
         }
     }
 }
