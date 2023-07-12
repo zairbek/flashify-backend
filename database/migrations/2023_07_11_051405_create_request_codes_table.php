@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('accounts-request_codes', function (Blueprint $table) {
             $table->uuid()->primary();
-            $table->uuid('account_uuid')->unique();
+            $table->uuid('account_uuid')->unique()->nullable();
             $table->foreign('account_uuid')->references('uuid')->on('accounts')->cascadeOnDelete();
             $table->string('email', 255)->nullable();
             $table->string('phone', 255)->nullable();
