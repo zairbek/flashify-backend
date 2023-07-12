@@ -116,10 +116,10 @@ class UserService
         } catch (RequestCodeNotFoundException $e) {
             $requestCode = new RequestCode(
                 uuid: Uuid::next(),
-                userUuid: $user->getUuid(),
                 recipient: $emailVO,
                 code: ConfirmationCode::generate(),
             );
+            $requestCode->setUserUuid($user->getUuid());
 
             $this->codeRepository->create($requestCode);
         }
@@ -173,10 +173,10 @@ class UserService
         } catch (RequestCodeNotFoundException $e) {
             $requestCode = new RequestCode(
                 uuid: Uuid::next(),
-                userUuid: $user->getUuid(),
                 recipient: $phoneVO,
                 code: ConfirmationCode::generate(),
             );
+            $requestCode->setUserUuid($user->getUuid());
 
             $this->codeRepository->create($requestCode);
         }

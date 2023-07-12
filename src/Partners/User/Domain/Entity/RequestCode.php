@@ -19,20 +19,18 @@ class RequestCode implements AggregateRoot
     use EventTrait;
 
     private Uuid $uuid;
-    private Uuid $userUuid;
+    private ?Uuid $userUuid;
     private Email|Phone $recipient;
     private ConfirmationCode $code;
     private SendAt $sendAt;
 
     public function __construct(
         Uuid $uuid,
-        Uuid $userUuid,
         Email|Phone $recipient,
         ConfirmationCode $code,
     )
     {
         $this->uuid = $uuid;
-        $this->userUuid = $userUuid;
         $this->recipient = $recipient;
         $this->code = $code;
         $this->sendAt = SendAt::now();
@@ -43,7 +41,7 @@ class RequestCode implements AggregateRoot
         return $this->uuid;
     }
 
-    public function getUserUuid(): Uuid
+    public function getUserUuid(): ?Uuid
     {
         return $this->userUuid;
     }
@@ -94,6 +92,11 @@ class RequestCode implements AggregateRoot
     public function setRecipient(Phone|Email $recipient): void
     {
         $this->recipient = $recipient;
+    }
+
+    public function setUserUuid(?Uuid $userUuid): void
+    {
+        $this->userUuid = $userUuid;
     }
 
     public function isConfirmationCodeCorrect(Email|Phone $recipient, ConfirmationCode $confirmationCode): bool
