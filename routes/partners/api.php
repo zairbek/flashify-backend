@@ -9,6 +9,8 @@ use App\Http\Controllers\Api\Partners\V1\DocumentationController;
 use App\Http\Controllers\Api\Partners\V1\Me\Email\ChangeEmailController;
 use App\Http\Controllers\Api\Partners\V1\Me\Email\RequestCodeToChangeEmailController;
 use App\Http\Controllers\Api\Partners\V1\Me\GetMeController;
+use App\Http\Controllers\Api\Partners\V1\Me\Phone\ChangePhoneController;
+use App\Http\Controllers\Api\Partners\V1\Me\Phone\RequestCodeToChangePhoneController;
 use App\Http\Controllers\Api\Partners\V1\Me\UpdateMeController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,6 +56,10 @@ Route::middleware(['auth:api-partners'])->group(function () {
         Route::prefix('email')->group(function () {
             Route::post('request', RequestCodeToChangeEmailController::class);
             Route::post('change', ChangeEmailController::class);
+        });
+        Route::prefix('phone')->group(function () {
+            Route::post('request', RequestCodeToChangePhoneController::class);
+            Route::post('change', ChangePhoneController::class);
         });
     });
 });
