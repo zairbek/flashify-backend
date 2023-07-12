@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\Partners\V1\Me\GetMeController;
 use App\Http\Controllers\Api\Partners\V1\Me\Phone\ChangePhoneController;
 use App\Http\Controllers\Api\Partners\V1\Me\Phone\RequestCodeToChangePhoneController;
 use App\Http\Controllers\Api\Partners\V1\Me\UpdateMeController;
+use App\Http\Controllers\Api\Partners\V1\Register\RegisterController;
+use App\Http\Controllers\Api\Partners\V1\Register\RequestCodeToRegisterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -33,6 +35,11 @@ Route::prefix('documentation')->group(function () {
 
 Route::get('healthCheck', static function () {
     return Response::json(['message' => 'ok']);
+});
+
+Route::prefix('register')->group(function () {
+    Route::post('request', RequestCodeToRegisterController::class);
+    Route::post('sign-up', RegisterController::class);
 });
 
 Route::prefix('auth')->group(function () {
