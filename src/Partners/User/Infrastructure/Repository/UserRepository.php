@@ -155,7 +155,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function existByPhone(Phone $phone, ?Uuid $without = null): bool
     {
-        $query = Account::query()->where('phone', $phone->toString())
+        $query = Account::query()->where('phone_number', $phone->toString())
             ->where('region_iso_code', $phone->getRegionCode());
         if ($without) {
             $query->whereNot('uuid', $without->getId());
