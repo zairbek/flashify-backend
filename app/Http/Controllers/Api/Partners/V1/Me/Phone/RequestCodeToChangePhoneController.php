@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Partners\V1\Me\Phone;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Partners\Me\Email\RequestCodeToChangeEmailRequest;
 use App\Http\Requests\Partners\Me\Phone\RequestCodeToChangePhoneRequest;
 use DB;
 use Exception;
@@ -30,7 +29,7 @@ class RequestCodeToChangePhoneController extends Controller
     {
         DB::beginTransaction();
         try {
-            $this->service->requestCodeToChangeEmail($request->get('phone'));
+            $this->service->requestCodeToChangePhone('KG', $request->get('phone'));
             DB::commit();
             return response()->json(['message' => 'ok']);
         } catch (RequestCodeThrottlingException $e) {

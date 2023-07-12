@@ -96,4 +96,12 @@ class User implements AggregateRoot
     {
         $this->email = $email;
     }
+
+    /**
+     * @param Phone|null $phone
+     */
+    public function changePhone(?Phone $phone): void
+    {
+        $this->phone = $phone;
+    }
 }

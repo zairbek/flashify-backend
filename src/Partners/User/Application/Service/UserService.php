@@ -12,6 +12,7 @@ use MarketPlace\Common\Domain\ValueObject\SendAt;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Common\Infrastructure\Service\Hydrator;
 use MarketPlace\Partners\User\Application\Dto\ChangeEmailDto;
+use MarketPlace\Partners\User\Application\Dto\ChangePhoneDto;
 use MarketPlace\Partners\User\Application\Dto\FindUserByPhoneDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserNameDto;
@@ -134,6 +135,53 @@ class UserService
         }
 
         $user->changeEmail(new Email($emailVO->getEmail()));
+        $this->repository->update($user);
+        $this->codeRepository->delete($requestCode);
+    }
+
+    /**
+     * @throws UserUnauthenticatedException
+     * @throws RequestCodeThrottlingException
+     */
+    public function requestCodeToChangePhone(string $regionCode, string $phone): void
+    {
+        $user = $this->repository->me();
+        $phoneVO = \MarketPlace\Common\Domain\ValueObject\Phone::fromString($regionCode, $phone);
+
+        try {
+            $requestCode = $this->codeRepository->findByUser($user->getUuid());
+            $requestCode->setRecipient($phoneVO);
+            $requestCode->sendSmsConfirmationCode();
+            $this->codeRepository->update($requestCode);
+        } catch (RequestCodeNotFoundException $e) {
+            $requestCode = new RequestCode(
+                uuid: Uuid::next(),
+                userUuid: $user->getUuid(),
+                recipient: $phoneVO,
+                code: ConfirmationCode::generate(),
+            );
+
+            $this->codeRepository->create($requestCode);
+        }
+    }
+
+    /**
+     * @throws ConfirmationCodeIncorrectException
+     * @throws UserNotFoundException
+     * @throws UserUnauthenticatedException
+     * @throws RequestCodeNotFoundException
+     */
+    public function changePhone(ChangePhoneDto $dto): void
+    {
+        $user = $this->repository->me();
+        $phoneVO = \MarketPlace\Common\Domain\ValueObject\Phone::fromString($dto->regionCode, $dto->number);
+
+        $requestCode = $this->codeRepository->findByUser($user->getUuid());
+        if (! $requestCode->isConfirmationCodeCorrect($phoneVO, new ConfirmationCode($dto->confirmationCode))) {
+            throw new ConfirmationCodeIncorrectException();
+        }
+
+        $user->changePhone(Phone::fromString($dto->regionCode, $dto->number));
         $this->repository->update($user);
         $this->codeRepository->delete($requestCode);
     }

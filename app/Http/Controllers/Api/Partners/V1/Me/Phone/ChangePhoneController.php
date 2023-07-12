@@ -12,6 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Partners\User\Application\Dto\ChangeEmailDto;
+use MarketPlace\Partners\User\Application\Dto\ChangePhoneDto;
 use MarketPlace\Partners\User\Application\Service\UserService;
 use MarketPlace\Partners\User\Infrastructure\Exception\ConfirmationCodeIncorrectException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeNotFoundException;
@@ -36,8 +37,9 @@ class ChangePhoneController extends Controller
         DB::beginTransaction();
 
         try {
-            $this->service->changeEmail(new ChangeEmailDto(
-                email: $request->get('phone'),
+            $this->service->changePhone(new ChangePhoneDto(
+                regionCode: 'KG',
+                number: $request->get('phone'),
                 confirmationCode: $request->get('code')
             ));
             DB::commit();
