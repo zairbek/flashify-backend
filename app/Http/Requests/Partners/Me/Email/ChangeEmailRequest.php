@@ -21,7 +21,8 @@ class ChangeEmailRequest extends FormRequest
                 'required'
             ],
             'code' => [
-                'numeric',
+                'string',
+                'max:6',
                 'required'
             ],
         ];
