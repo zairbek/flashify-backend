@@ -65,7 +65,7 @@ class RequestCodeRepository implements RequestCodeRepositoryInterface
 
         $requestCodeDB->update([
             'uuid' => $requestCode->getUuid()->getId(),
-            'account_uuid' => $requestCode->getUserUuid()->getId(),
+            'account_uuid' => $requestCode->getUserUuid()?->getId(),
             'email' => $email,
             'phone' => $phone,
             'code' => $requestCode->getCode()->getCode(),
@@ -113,7 +113,16 @@ class RequestCodeRepository implements RequestCodeRepositoryInterface
      */
     public function findByPhone(Phone $phone): RequestCode
     {
-        // TODO: Implement findByPhone() method.
+        $requestCode = RequestCodeDB::whereJsonContains('phone', [
+            'regionCode' => $phone->getRegionCode(),
+            'number' => $phone->toString()]
+        )->first();
+
+        if (is_null($requestCode)) {
+            throw new RequestCodeNotFoundException();
+        }
+
+        return $this->hydrate($requestCode);
     }
 
     /**
@@ -134,7 +143,7 @@ class RequestCodeRepository implements RequestCodeRepositoryInterface
 
         return $this->hydrator->hydrate(RequestCode::class, [
             'uuid' => new Uuid($requestCode->uuid),
-            'userUuid' => new Uuid($requestCode->account_uuid),
+            'userUuid' => $requestCode->account_uuid ? new Uuid($requestCode->account_uuid) : null,
             'recipient' => $recipient,
             'code' => new ConfirmationCode($requestCode->code),
             'sendAt' => new SendAt($requestCode->sendAt),

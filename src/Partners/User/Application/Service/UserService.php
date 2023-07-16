@@ -43,13 +43,13 @@ class UserService
     private RequestCodeRepositoryInterface $codeRepository;
 
     public function __construct(
-        UserRepositoryInterface $repository,
+        UserRepositoryInterface        $repository,
         RequestCodeRepositoryInterface $codeRepository,
     )
     {
         $this->eventDispatcher = new EventDispatcher($this->listeners);
         $this->repository = $repository;
-        $this->hydrator  = new Hydrator();
+        $this->hydrator = new Hydrator();
         $this->codeRepository = $codeRepository;
     }
 
@@ -142,7 +142,7 @@ class UserService
         }
 
         $requestCode = $this->codeRepository->findByUser($user->getUuid());
-        if (! $requestCode->isConfirmationCodeCorrect($emailVO, new ConfirmationCode($dto->confirmationCode))) {
+        if (!$requestCode->isConfirmationCodeCorrect($emailVO, new ConfirmationCode($dto->confirmationCode))) {
             throw new ConfirmationCodeIncorrectException();
         }
 
@@ -199,13 +199,36 @@ class UserService
         }
 
         $requestCode = $this->codeRepository->findByUser($user->getUuid());
-        if (! $requestCode->isConfirmationCodeCorrect($phoneVO, new ConfirmationCode($dto->confirmationCode))) {
+        if (!$requestCode->isConfirmationCodeCorrect($phoneVO, new ConfirmationCode($dto->confirmationCode))) {
             throw new ConfirmationCodeIncorrectException();
         }
 
         $user->changePhone(Phone::fromString($dto->regionCode, $dto->number));
         $this->repository->update($user);
         $this->codeRepository->delete($requestCode);
+    }
+
+    /**
+     * @throws RequestCodeThrottlingException
+     */
+    public function requestCodeForRegister(string $getRegionCode, string $phone): void
+    {
+        $phoneVO = \MarketPlace\Common\Domain\ValueObject\Phone::fromString($getRegionCode, $phone);
+
+        try {
+            $requestCode = $this->codeRepository->findByPhone($phoneVO);
+            $requestCode->setRecipient($phoneVO);
+            $requestCode->sendSmsConfirmationCode();
+            $this->codeRepository->update($requestCode);
+        } catch (RequestCodeNotFoundException $e) {
+            $requestCode = new RequestCode(
+                uuid: Uuid::next(),
+                recipient: $phoneVO,
+                code: ConfirmationCode::generate(),
+            );
+
+            $this->codeRepository->create($requestCode);
+        }
     }
 
     /**

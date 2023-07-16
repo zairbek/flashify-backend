@@ -26,6 +26,7 @@ use MarketPlace\Partners\Auth\Infrastructure\Exception\UserPhoneNotFoundExceptio
 use MarketPlace\Partners\User\Infrastructure\Api\UserApi;
 use MarketPlace\Partners\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Partners\Auth\Domain\Entity\User;
+use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
 
 class UserAdapter implements UserAdapterInterface
@@ -72,6 +73,14 @@ class UserAdapter implements UserAdapterInterface
         } catch (UserNotFoundException $e) {
             throw new AuthModuleUserNotFoundException($e->getMessage(), $e->getCode());
         }
+    }
+
+    /**
+     * @throws RequestCodeThrottlingException
+     */
+    public function requestCodeForRegister(Phone $phone): void
+    {
+        $this->api->requestCodeForRegister($phone->getRegionCode(), $phone->toString());
     }
 
     /**
@@ -130,113 +139,4 @@ class UserAdapter implements UserAdapterInterface
             'status' => new UserStatus($user['status'])
         ]);
     }
-
-
-//    public function createUserPhone(PhoneNumber $userPhone): void
-//    {
-//        $this->api->createUserPhone([
-//            'uuid' => $userPhone->getUuid()->getId(),
-//            'phone' => [
-//                'regionIsoCode' => $userPhone->getPhone()->getRegionCode(),
-//                'number' => $userPhone->getPhone()->toString()
-//            ],
-//            'createdAt' => $userPhone->getCreatedAt()->toIsoFormat(),
-//            'userId' => $userPhone->getUserId()?->getUserId(),
-//            'confirmationCode' => $userPhone->getConfirmationCode()?->getCode(),
-//            'sendAt' => $userPhone->getSendAt()?->toIsoFormat(),
-//        ]);
-//    }
-//
-//    public function updateUserPhone(PhoneNumber $userPhone): void
-//    {
-//        $this->api->updateUserPhone([
-//            'uuid' => $userPhone->getUuid()->getId(),
-//            'phone' => [
-//                'regionIsoCode' => $userPhone->getPhone()->getRegionCode(),
-//                'number' => $userPhone->getPhone()->toString()
-//            ],
-//            'createdAt' => $userPhone->getCreatedAt()->toIsoFormat(),
-//            'userId' => $userPhone->getUserId()?->getUserId()->getId(),
-//            'confirmationCode' => $userPhone->getConfirmationCode()?->getCode(),
-//            'sendAt' => $userPhone->getSendAt()?->toIsoFormat(),
-//        ]);
-//    }
-//
-//    /**
-//     * @inheritDoc
-//     */
-//    public function findUser(UserId $getUserId): User
-//    {
-//        $user = $this->api->findUser($getUserId->getUserId()->getId());
-//
-//        return $this->hydrator->hydrate(User::class, [
-//            'id' => new Uuid($user['uuid']),
-//            'login' => new Login($user['login']),
-//            'personName' => new PersonName(
-//                firstName: $user['userName']['firstName'],
-//                lastName: $user['userName']['firstName'],
-//                middleName: $user['userName']['middleName']
-//            ),
-//            'phone' => $user['phone']
-//                ? $this->hydrator->hydrate(PhoneNumber::class, [
-//                    'uuid' => new Uuid($user['phone']['uuid']),
-//                    'phone' => Phone::fromString($user['phone']['phone']['regionIsoCode'], $user['phone']['phone']['number']),
-//                    'createdAt' => CreatedAt::fromIsoFormat($user['phone']['createdAt']),
-//                    'userId' => $user['phone']['userId'] ? new UserId(new Uuid($user['phone']['userId'])) : null,
-//                    'confirmationCode' => $user['phone']['confirmationCode'] ? new ConfirmationCode($user['phone']['confirmationCode']) : null,
-//                    'sendAt' => $user['phone']['sendAt'] ? SendAt::fromIsoFormat($user['phone']['sendAt']) : null,
-//                ])
-//                : null,
-//            'email' => $user['email']
-//                ? $this->hydrator->hydrate(UserEmail::class, [
-//                    'uuid' => new Uuid($user['email']['uuid']),
-//                    'email' => new Email($user['email']['email']),
-//                    'confirmationCode' => $user['email']['confirmationCode'] ? new ConfirmationCode($user['email']['confirmationCode']) : null,
-//                    'sendAt' => $user['email']['sendAt'] ? SendAt::fromIsoFormat($user['email']['sendAt']) : null,
-//                    'verifiedAt' => $user['email']['verifiedAt'] ? VerifiedAt::fromIsoFormat($user['email']['verifiedAt']) : null,
-//                    'userUuid' => new UserId(new Uuid($user['email']['userUuid'])),
-//                ])
-//                : null,
-//            'status' => new UserStatus($user['status']),
-//        ]);
-//    }
-//
-//    public function createUserViaPhone(User $user): void
-//    {
-//        if (is_null($user->getPhone())){
-//            throw new LogicException('При создание пользователя через номер телефона произошла ошибка.');
-//        }
-//
-//        $this->api->createUserViaPhone([
-//            'uuid' => $user->getId()->getId(),
-//            'login' => $user->getLogin()->getLogin(),
-//            'phoneUuid' => $user->getPhone()->getUuid()->getId(),
-//        ]);
-//    }
-//
-//    /**
-//     * @throws UserEmailNotFoundException
-//     */
-//    public function findUserEmail(Email $email): UserEmail
-//    {
-//        $userEmail = $this->api->findUserEmail($email->getEmail());
-//
-//        if (empty($userEmail)) {
-//            throw new UserEmailNotFoundException();
-//        }
-//
-//        return $this->hydrator->hydrate(UserEmail::class, [
-//            'uuid' => new Uuid($userEmail['uuid']),
-//            'email' => new Email($userEmail['email']),
-//            'confirmationCode' => $userEmail['confirmationCode'] ? new ConfirmationCode($userEmail['confirmationCode']) : null,
-//            'sendAt' => $userEmail['sendAt'] ? SendAt::fromIsoFormat($userEmail['sendAt']) : null,
-//            'verifiedAt' => $userEmail['verifiedAt'] ? VerifiedAt::fromIsoFormat($userEmail['verifiedAt']) : null,
-//            'userUuid' => new UserId(new Uuid($userEmail['userUuid'])),
-//        ]);
-//    }
-//
-//    public function updateUserEmail(UserEmail $userEmail): void
-//    {
-//        $this->api->updateUserEmail($userEmail->toArray());
-//    }
 }

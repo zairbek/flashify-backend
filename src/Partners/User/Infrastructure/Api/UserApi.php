@@ -12,6 +12,7 @@ use MarketPlace\Partners\User\Application\Dto\UpdateUserEmailDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserPhoneDto;
 use MarketPlace\Partners\User\Application\Service\UserService;
 use MarketPlace\Partners\User\Domain\Entity\User;
+use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 use MarketPlace\Partners\User\Infrastructure\Exception\UserNotFoundException;
 
 class UserApi
@@ -50,6 +51,14 @@ class UserApi
             lastName: $data['userName']['lastName'],
             status: $data['status']
         ));
+    }
+
+    /**
+     * @throws RequestCodeThrottlingException
+     */
+    public function requestCodeForRegister(string $getRegionCode, string $toString): void
+    {
+        $this->userService->requestCodeForRegister($getRegionCode, $toString);
     }
 
     public function findByPhone(string $regionIsoCode, string $number): array

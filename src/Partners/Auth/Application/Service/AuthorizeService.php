@@ -36,6 +36,8 @@ use MarketPlace\Partners\Auth\Infrastructure\Service\TokenService;
 use MarketPlace\Partners\Auth\Domain\Adapter\UserAdapterInterface;
 use MarketPlace\Partners\Auth\Domain\Repository\TokenRepositoryInterface;
 use MarketPlace\Partners\Auth\Domain\ValueObject\Phone;
+use MarketPlace\Partners\User\Infrastructure\Exception\PhoneAlreadyRegisteredException;
+use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 
 class AuthorizeService
 {
@@ -176,5 +178,21 @@ class AuthorizeService
         $jwtTokenId = JwtTokenId::fromJwtToken($dto->bearerToken);
 
         $this->tokenRepository->signOut($jwtTokenId);
+    }
+
+    /**
+     * @throws PhoneAlreadyRegisteredException
+     * @throws RequestCodeThrottlingException
+     */
+    public function requestCodeToRegister(string $regionCode, string $number): void
+    {
+        $phone = Phone::fromString($regionCode, $number);
+
+        try {
+            $this->userAdapter->findByPhone($phone);
+            throw new PhoneAlreadyRegisteredException();
+        } catch (UserPhoneNotFoundException $e) {}
+
+        $this->userAdapter->requestCodeForRegister($phone);
     }
 }

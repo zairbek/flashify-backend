@@ -11,6 +11,7 @@ use MarketPlace\Partners\Auth\Domain\ValueObject\Email;
 use MarketPlace\Partners\Auth\Domain\ValueObject\Phone;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\UserNotFoundException;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\UserPhoneNotFoundException;
+use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
 
 interface UserAdapterInterface
 {
@@ -49,4 +50,9 @@ interface UserAdapterInterface
 //    public function findUserEmail(Email $email): UserEmail;
 //
 //    public function updateUserEmail(UserEmail $userEmail): void;
+
+    /**
+     * @throws RequestCodeThrottlingException
+     */
+    public function requestCodeForRegister(Phone $phone): void;
 }
