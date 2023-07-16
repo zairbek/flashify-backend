@@ -16,6 +16,14 @@ class RegisterRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'firstName' => [
+                'string',
+                'required'
+            ],
+            'lastName' => [
+                'string',
+                'required'
+            ],
             'phone' => [
                 'regex:/(^\+996)((\d{9})|(\s\(\d{3}\)\s\d{3}\s\d{2}\s\d{2}))/',
                 'required'
@@ -23,6 +31,12 @@ class RegisterRequest extends FormRequest
             'code' => [
                 'numeric',
                 'required'
+            ],
+            'password' => [
+                'string',
+                'min:8',
+                'confirmed',
+                'required',
             ],
         ];
     }
