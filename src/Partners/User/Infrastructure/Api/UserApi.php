@@ -6,6 +6,7 @@ namespace MarketPlace\Partners\User\Infrastructure\Api;
 
 use App;
 use MarketPlace\Common\Domain\ValueObject\Uuid;
+use MarketPlace\Partners\User\Application\Dto\CreateUserDto;
 use MarketPlace\Partners\User\Application\Dto\FindUserByPhoneDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserDto;
 use MarketPlace\Partners\User\Application\Dto\UpdateUserEmailDto;
@@ -22,6 +23,32 @@ class UserApi
     public function __construct()
     {
         $this->userService = App::make(UserService::class);
+    }
+
+    public function create(array $data): void
+    {
+        $this->userService->create(new CreateUserDto(
+            uuid: $data['uuid'],
+            login: $data['login'],
+            phoneDto: $data['phone']
+                ? new UpdateUserPhoneDto(
+                    regionCode: $data['phone']['regionIsoCode'],
+                    phone: $data['phone']['number'],
+                    code: $data['phone']['code'],
+                    sendAt: $data['phone']['sendAt'],
+                )
+                : null,
+            emailDto: $data['email']
+                ? new UpdateUserEmailDto(
+                    email: $data['email']['email'],
+                    code: $data['email']['code'],
+                    sendAt: $data['email']['sendAt'],
+                )
+                : null,
+            firstName: $data['userName']['firstName'],
+            lastName: $data['userName']['lastName'],
+            status: $data['status']
+        ));
     }
 
     /**
@@ -59,6 +86,11 @@ class UserApi
     public function requestCodeForRegister(string $getRegionCode, string $toString): void
     {
         $this->userService->requestCodeForRegister($getRegionCode, $toString);
+    }
+
+    public function isConfirmationCodeCorrect(array $data): bool
+    {
+        return $this->userService->isConfirmationCodeCorrect($data);
     }
 
     public function findByPhone(string $regionIsoCode, string $number): array

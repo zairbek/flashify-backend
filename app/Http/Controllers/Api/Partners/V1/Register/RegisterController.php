@@ -12,6 +12,11 @@ use DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationException;
+use MarketPlace\Partners\Auth\Application\Dto\RegisterDto;
+use MarketPlace\Partners\Auth\Application\Service\AuthorizeService;
+use MarketPlace\Partners\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
 use MarketPlace\Partners\User\Application\Dto\ChangeEmailDto;
 use MarketPlace\Partners\User\Application\Dto\ChangePhoneDto;
 use MarketPlace\Partners\User\Application\Service\UserService;
@@ -24,34 +29,34 @@ use Throwable;
 
 class RegisterController extends Controller
 {
-    private UserService $service;
+    private AuthorizeService $service;
 
-    public function __construct(UserService $service)
+    public function __construct(AuthorizeService $service)
     {
         $this->service = $service;
     }
 
-    /**
-     * @throws ValidationException|Throwable
-     */
     public function __invoke(RegisterRequest $request, Response $response): JsonResponse
     {
         DB::beginTransaction();
 
         try {
-            $this->service->changePhone(new ChangePhoneDto(
-                regionCode: 'KG',
-                number: $request->get('phone'),
-                confirmationCode: $request->get('code')
+            $token = $this->service->register(new RegisterDto(
+                firstName: $request->get('firstName'),
+                lastName: $request->get('firstName'),
+                phoneRegionCode: 'KG',
+                phone: $request->get('phone'),
+                code: $request->get('code'),
+                password: $request->get('password'),
             ));
             DB::commit();
-            return response()->json(['message' => 'ok']);
-        } catch (ConfirmationCodeIncorrectException|RequestCodeNotFoundException $e) {
+            return response()->json($token->toArray());
+        } catch (\JsonException $e) {
+        } catch (UniqueTokenIdentifierConstraintViolationException $e) {
+        } catch (OAuthServerException $e) {
+        } catch (ConfirmationCodeIsNotMatchException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['code' => ['Неправильный код подтверждение']]);
-        } catch (UserNotFoundException|UserUnauthenticatedException $e) {
-            DB::rollBack();
-            return response()->json(['message' => $e], 400);
         } catch (PhoneAlreadyRegisteredException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['phone' => ['Телефон номер уже зарегистрирован']]);

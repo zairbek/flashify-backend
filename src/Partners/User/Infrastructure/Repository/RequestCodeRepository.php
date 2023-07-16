@@ -36,7 +36,7 @@ class RequestCodeRepository implements RequestCodeRepositoryInterface
 
         RequestCodeDB::create([
             'uuid' => $requestCode->getUuid()->getId(),
-            'account_uuid' => $requestCode->getUserUuid()->getId(),
+            'account_uuid' => $requestCode->getUserUuid()?->getId(),
             'email' => $email,
             'phone' => $phone,
             'code' => $requestCode->getCode()->getCode(),

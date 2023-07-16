@@ -39,9 +39,15 @@ class UserRepository implements UserRepositoryInterface
 
     public function create(User $user): void
     {
-        UserDB::create([
+        Account::create([
             'uuid' => $user->getUuid()->getId(),
             'login' => $user->getLogin()->getLogin(),
+            'first_name' => $user->getAccountName()?->getFirstName(),
+            'last_name' => $user->getAccountName()?->getLastName(),
+            'region_iso_code' => $user->getPhone()?->getRegionCode(),
+            'phone_number' => $user->getPhone()?->toString(),
+            'email' => $user->getEmail()?->getEmail(),
+            'status' => $user->getStatus()->getStatus(),
         ]);
     }
 

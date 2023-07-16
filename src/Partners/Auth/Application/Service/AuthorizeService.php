@@ -11,8 +11,13 @@ use League\OAuth2\Server\Exception\UniqueTokenIdentifierConstraintViolationExcep
 use MarketPlace\Common\Domain\Events\EventDispatcher;
 use MarketPlace\Common\Domain\Exceptions\UserIsBannedException;
 use MarketPlace\Common\Domain\Exceptions\UserIsInactiveException;
+use MarketPlace\Common\Domain\ValueObject\ConfirmationCode;
+use MarketPlace\Common\Domain\ValueObject\Login;
+use MarketPlace\Common\Domain\ValueObject\Password;
+use MarketPlace\Common\Domain\ValueObject\Uuid;
 use MarketPlace\Partners\Auth\Application\Dto\RefreshingTokenDto;
 use MarketPlace\Market\Auth\Application\Dto\SignOutDto;
+use MarketPlace\Partners\Auth\Application\Dto\RegisterDto;
 use MarketPlace\Partners\Auth\Application\Dto\SendCodeForSignInViaEmailDto;
 use MarketPlace\Partners\Auth\Application\Dto\SendCodeForSignInViaPhoneDto;
 use MarketPlace\Partners\Auth\Application\Dto\SignInWithEmailDto;
@@ -20,10 +25,12 @@ use MarketPlace\Partners\Auth\Application\Dto\SignInWithPhoneDto;
 use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForEmailEvent;
 use MarketPlace\Market\Auth\Domain\Events\SendConfirmationCodeForPhoneNumberEvent;
 use MarketPlace\Market\Auth\Domain\Events\UserAuthorizedEvent;
+use MarketPlace\Partners\Auth\Domain\Entity\User;
 use MarketPlace\Partners\Auth\Domain\ValueObject\Email;
 use MarketPlace\Partners\Auth\Domain\ValueObject\JwtTokenId;
 use MarketPlace\Partners\Auth\Domain\ValueObject\RefreshToken;
 use MarketPlace\Partners\Auth\Domain\ValueObject\Token;
+use MarketPlace\Partners\Auth\Domain\ValueObject\UserName;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\ConfirmationCodeIsNotMatchException;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\NotGivenClientIdAndSecretForTokenServiceException;
 use MarketPlace\Partners\Auth\Infrastructure\Exception\SendSmsThrottleException;
@@ -194,5 +201,43 @@ class AuthorizeService
         } catch (UserPhoneNotFoundException $e) {}
 
         $this->userAdapter->requestCodeForRegister($phone);
+    }
+
+    /**
+     * @param RegisterDto $dto
+     * @return Token
+     * @throws ConfirmationCodeIsNotMatchException
+     * @throws JsonException
+     * @throws OAuthServerException
+     * @throws PhoneAlreadyRegisteredException
+     * @throws UniqueTokenIdentifierConstraintViolationException
+     */
+    public function register(RegisterDto $dto): Token
+    {
+        $phone = Phone::fromString($dto->phoneRegionCode, $dto->phone);
+
+        try {
+            $this->userAdapter->findByPhone($phone);
+            throw new PhoneAlreadyRegisteredException();
+        } catch (UserPhoneNotFoundException $e) {}
+
+        if (! $this->userAdapter->isConfirmationCodeCorrect($phone, new ConfirmationCode($dto->code))) {
+            throw new ConfirmationCodeIsNotMatchException();
+        }
+
+        $user = new User(
+            uuid: Uuid::next(),
+            login: Login::generate(),
+            userName: new UserName($dto->firstName, $dto->lastName),
+            phone: $phone,
+            password: new Password($dto->password)
+        );
+
+        $this->userAdapter->create($user);
+
+        $user->authorize();
+        $this->eventDispatcher->dispatch($user->releaseEvents());
+
+        return (new TokenService())->generate($user);
     }
 }

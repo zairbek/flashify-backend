@@ -19,7 +19,7 @@ class RequestCode implements AggregateRoot
     use EventTrait;
 
     private Uuid $uuid;
-    private ?Uuid $userUuid;
+    private ?Uuid $userUuid = null;
     private Email|Phone $recipient;
     private ConfirmationCode $code;
     private SendAt $sendAt;

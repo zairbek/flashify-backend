@@ -26,6 +26,11 @@ class ConfirmationCode
         return $this->code;
     }
 
+    public function isEqual(self $code): bool
+    {
+        return $this->getCode() === $code->getCode();
+    }
+
     /**
      * @throws Exception
      */
