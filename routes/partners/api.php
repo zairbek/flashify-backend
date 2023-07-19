@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\Partners\V1\Me\Phone\RequestCodeToChangePhoneContro
 use App\Http\Controllers\Api\Partners\V1\Me\UpdateMeController;
 use App\Http\Controllers\Api\Partners\V1\Register\RegisterController;
 use App\Http\Controllers\Api\Partners\V1\Register\RequestCodeToRegisterController;
+use App\Http\Controllers\Api\Partners\V1\Store\GetMyStoreController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -69,4 +70,8 @@ Route::middleware(['auth:api-partners'])->group(callback: function () {
             Route::post('change', ChangePhoneController::class);
         });
     });
+});
+
+Route::middleware(['auth:api-partners'])->prefix('store')->group(callback: function () {
+    Route::get('', GetMyStoreController::class);
 });
