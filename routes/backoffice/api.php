@@ -3,6 +3,11 @@
 use App\Http\Controllers\Api\Backoffice\V1\Auth\RefreshTokenController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignInController;
 use App\Http\Controllers\Api\Backoffice\V1\Auth\SignOutController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\CreateCategoryController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\DeleteCategoryController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\ListCategoriesController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\ShowCategoryController;
+use App\Http\Controllers\Api\Backoffice\V1\Categories\UpdateCategoryController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\CreateIconController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\DeleteIconController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\ListIconsController;
@@ -10,11 +15,6 @@ use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\ShowIconController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\UpdateIconController;
 use App\Http\Controllers\Api\Backoffice\V1\DocumentationController;
 use App\Http\Controllers\Api\Backoffice\V1\Me\GetMeController;
-use App\Http\Controllers\Api\Market\V1\Categories\CreateCategoryController;
-use App\Http\Controllers\Api\Market\V1\Categories\DeleteCategoryController;
-use App\Http\Controllers\Api\Market\V1\Categories\ListCategoriesController;
-use App\Http\Controllers\Api\Market\V1\Categories\ShowCategoryController;
-use App\Http\Controllers\Api\Market\V1\Categories\UpdateCategoryController;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 

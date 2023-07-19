@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\Market\Categories;
+namespace App\Http\Requests\Backoffice\Categories;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateCategoryRequest extends FormRequest
+class CreateCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -15,7 +15,7 @@ class UpdateCategoryRequest extends FormRequest
     {
         return [
             'name' => ['string', 'required'],
-            'slug' => ['string', 'required'],
+            'slug' => ['string', 'nullable'],
             'description' => ['string', 'nullable'],
             'parentCategory' => ['string', 'nullable'],
             'active' => ['boolean', 'nullable'],

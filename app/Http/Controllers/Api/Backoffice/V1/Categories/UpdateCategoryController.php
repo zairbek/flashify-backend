@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Api\Market\V1\Categories;
+namespace App\Http\Controllers\Api\Backoffice\V1\Categories;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Market\Categories\UpdateCategoryRequest;
+use App\Http\Requests\Backoffice\Categories\UpdateCategoryRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use MarketPlace\Market\Category\Application\Dto\UpdateCategoryDto;
