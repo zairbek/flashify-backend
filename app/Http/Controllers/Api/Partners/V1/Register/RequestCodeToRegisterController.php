@@ -13,6 +13,7 @@ use Illuminate\Validation\ValidationException;
 use MarketPlace\Partners\Auth\Application\Service\AuthorizeService;
 use MarketPlace\Partners\User\Infrastructure\Exception\PhoneAlreadyRegisteredException;
 use MarketPlace\Partners\User\Infrastructure\Exception\RequestCodeThrottlingException;
+use Webmozart\Assert\InvalidArgumentException;
 
 class RequestCodeToRegisterController extends Controller
 {
@@ -33,6 +34,9 @@ class RequestCodeToRegisterController extends Controller
         } catch (PhoneAlreadyRegisteredException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['phone' => ['Телефон номер уже зарегистрирован']]);
+        } catch (InvalidArgumentException $e) {
+            DB::rollBack();
+            throw ValidationException::withMessages(['phone' => ['Невалидный номер телефона']]);
         } catch (RequestCodeThrottlingException $e) {
             DB::rollBack();
             throw ValidationException::withMessages(['phone' => ['Повторная отправка возможно через 1 минута']]);

@@ -55,7 +55,7 @@ Route::prefix('auth')->group(function () {
 //    Route::get('sign-out', SignOutController::class)->middleware(['auth:api']);
 });
 
-Route::middleware(['auth:api-partners'])->group(function () {
+Route::middleware(['auth:api-partners'])->group(callback: function () {
     Route::prefix('me')->group(function () {
         Route::get('', GetMeController::class);
         Route::post('', UpdateMeController::class);

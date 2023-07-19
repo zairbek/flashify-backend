@@ -228,9 +228,7 @@ class AuthorizeService
         $user = new User(
             uuid: Uuid::next(),
             login: Login::generate(),
-            userName: new UserName($dto->firstName, $dto->lastName),
             phone: $phone,
-            password: new Password($dto->password)
         );
 
         $this->userAdapter->create($user);
