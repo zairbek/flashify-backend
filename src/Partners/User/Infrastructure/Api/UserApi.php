@@ -93,6 +93,11 @@ class UserApi
         return $this->userService->isConfirmationCodeCorrect($data);
     }
 
+    public function clearConfirmationCode(array $data): void
+    {
+        $this->userService->clearConfirmationCode($data);
+    }
+
     public function findByPhone(string $regionIsoCode, string $number): array
     {
         try {

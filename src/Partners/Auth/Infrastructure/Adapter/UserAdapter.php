@@ -120,6 +120,14 @@ class UserAdapter implements UserAdapterInterface
         ]);
     }
 
+    public function clearConfirmationCode(Phone $phone): void
+    {
+        $this->api->clearConfirmationCode([
+            'regionCode' => $phone->getRegionCode(),
+            'phone' => $phone->toString(),
+        ]);
+    }
+
     /**
      * @throws UserPhoneNotFoundException
      * @throws Exception

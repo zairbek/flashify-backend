@@ -275,6 +275,15 @@ class UserService
         }
     }
 
+    public function clearConfirmationCode(array $data): void
+    {
+        $phoneVO = \MarketPlace\Common\Domain\ValueObject\Phone::fromString($data['regionCode'], $data['phone']);
+        try {
+            $requestCode = $this->codeRepository->findByPhone($phoneVO);
+            $this->codeRepository->delete($requestCode);
+        } catch (RequestCodeNotFoundException $e) {}
+    }
+
     /**
      * @throws UserNotFoundException
      */

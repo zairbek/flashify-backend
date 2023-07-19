@@ -224,6 +224,7 @@ class AuthorizeService
         if (! $this->userAdapter->isConfirmationCodeCorrect($phone, new ConfirmationCode($dto->code))) {
             throw new ConfirmationCodeIsNotMatchException();
         }
+        $this->userAdapter->clearConfirmationCode($phone);
 
         $user = new User(
             uuid: Uuid::next(),

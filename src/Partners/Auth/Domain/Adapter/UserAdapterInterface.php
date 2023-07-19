@@ -34,4 +34,6 @@ interface UserAdapterInterface
     public function requestCodeForRegister(Phone $phone): void;
 
     public function isConfirmationCodeCorrect(Phone $phone, ConfirmationCode $code): bool;
+
+    public function clearConfirmationCode(Phone $phone): void;
 }
