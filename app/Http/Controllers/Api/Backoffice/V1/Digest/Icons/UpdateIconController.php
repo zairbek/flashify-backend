@@ -5,16 +5,11 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api\Backoffice\V1\Digest\Icons;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Backoffice\Categories\UpdateCategoryRequest;
 use App\Http\Requests\Backoffice\Digest\Icon\UpdateIconRequest;
 use DB;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
-use MarketPlace\Backoffice\Category\Application\Dto\UpdateCategoryDto;
-use MarketPlace\Backoffice\Category\Application\Service\CategoryService;
-use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategoryNotFoundException;
-use MarketPlace\Backoffice\Category\Infrastructure\Exception\CategorySlugAlreadyExistsException;
 use MarketPlace\Backoffice\Digest\Icon\Application\Dto\UpdateIconDto;
 use MarketPlace\Backoffice\Digest\Icon\Application\Service\IconService;
 use MarketPlace\Backoffice\Digest\Icon\Domain\ValueObject\IconFile;
