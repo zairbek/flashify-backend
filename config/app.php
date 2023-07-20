@@ -201,9 +201,9 @@ return [
          */
         MarketPlace\Backoffice\Auth\Infrastructure\ServiceProvider\AuthServiceProvider::class,
         MarketPlace\Backoffice\User\Infrastructure\ServiceProvider\UserServiceProvider::class,
-        \MarketPlace\Market\Category\Infrastructure\ServiceProvider\CategoryServiceProvider::class,
+        MarketPlace\Market\Category\Infrastructure\ServiceProvider\CategoryServiceProvider::class,
         MarketPlace\Backoffice\Digest\Icon\Infrastructure\ServiceProvider\IconServiceProvider::class,
-
+        MarketPlace\Backoffice\Digest\Location\Infrastructure\ServiceProvider\LocationServiceProvider::class,
 
         /*
          * Module Market

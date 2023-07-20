@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('externalId')->unique();
+            $table->string('externalId')->unique()->nullable();
             $table->jsonb('translates')->nullable();
             $table->foreignIdFor(Location::class, 'parent_id')->nullable();
             $table->timestamps();

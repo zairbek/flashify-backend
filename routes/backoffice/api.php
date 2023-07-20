@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\DeleteIconController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\ListIconsController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\ShowIconController;
 use App\Http\Controllers\Api\Backoffice\V1\Digest\Icons\UpdateIconController;
+use App\Http\Controllers\Api\Backoffice\V1\Digest\Locations\ListLocationsController;
 use App\Http\Controllers\Api\Backoffice\V1\DocumentationController;
 use App\Http\Controllers\Api\Backoffice\V1\Me\GetMeController;
 use Illuminate\Support\Facades\Response;
@@ -64,7 +65,9 @@ Route::middleware(['auth:api-backoffice'])->group(function () {
             Route::put('{uuid}', UpdateIconController::class);
             Route::delete('{uuid}', DeleteIconController::class);
         });
+        Route::prefix('locations')->group(function () {
+            Route::get('', ListLocationsController::class);
+        });
     });
-
 });
 
